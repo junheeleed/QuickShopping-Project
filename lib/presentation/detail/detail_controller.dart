@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import '../../domain/entities/product_detail_entity.dart';
-import '../../domain/usecases/set_favorite.dart';
-import '../../domain/usecases/watch_product_detail.dart';
+import '../../domain/usecases/product/set_favorite.dart';
+import '../../domain/usecases/product/detail/watch_product_detail.dart';
 
 class ProductDetailController extends GetxController {
   final WatchProductDetail watchAppDetail;

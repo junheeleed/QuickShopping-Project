@@ -1,5 +1,5 @@
-import '../entities/product_detail_entity.dart';
-import '../repositories/store_repository.dart';
+import '../../../entities/product_detail_entity.dart';
+import '../../../repositories/store_repository.dart';
 
 class WatchProductDetail {
   final ProductRepository repo;

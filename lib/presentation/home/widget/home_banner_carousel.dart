@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quick_shopping/domain/entities/home_banner_entity.dart';
-import '../../../domain/usecases/get_banner_once.dart';
-import '../../../domain/usecases/upsert_all.dart';
-import '../../../domain/usecases/watch_banners.dart';
+import '../../../domain/usecases/banner/get_banner_once.dart';
+import '../../../domain/usecases/banner/insert_banner_all.dart';
+import '../../../domain/usecases/banner/watch_banners.dart';
 
 class HomeBannerItem {
   final int id;

@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:quick_shopping/presentation/home/widget/home_banner_carousel.dart';
-import '../../domain/usecases/get_banner_once.dart';
-import '../../domain/usecases/upsert_all.dart';
-import '../../domain/usecases/watch_banners.dart';
+import '../../domain/usecases/banner/get_banner_once.dart';
+import '../../domain/usecases/banner/insert_banner_all.dart';
+import '../../domain/usecases/banner/watch_banners.dart';
 import 'home_controller.dart';
 
 class HomeBinding extends Bindings {

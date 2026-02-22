@@ -1,4 +1,4 @@
-import '../repositories/store_repository.dart';
+import '../../repositories/store_repository.dart';
 
 class SetFavoriteParams {
   final int productId;

@@ -1,4 +1,4 @@
-import '../repositories/search_repository.dart';
+import '../../repositories/search_repository.dart';
 
 class InsertRecentKeyword {
   final SearchRepository repo;

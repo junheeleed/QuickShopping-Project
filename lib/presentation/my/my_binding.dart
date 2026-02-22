@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import '../../domain/usecases/login.dart';
-import '../../domain/usecases/logout.dart';
-import '../../domain/usecases/sign_up.dart';
-import '../../domain/usecases/watch_profile.dart';
+import '../../domain/usecases/account/login.dart';
+import '../../domain/usecases/account/logout.dart';
+import '../../domain/usecases/account/sign_up.dart';
+import '../../domain/usecases/account/watch_profile.dart';
 import 'my_controller.dart';
 
 class MyBinding extends Bindings {

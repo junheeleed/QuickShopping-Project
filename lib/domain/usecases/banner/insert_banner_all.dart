@@ -1,4 +1,4 @@
-import '../repositories/banner_repository.dart';
+import '../../repositories/banner_repository.dart';
 
 class InsertBannerAll {
   final BannerRepository repo;

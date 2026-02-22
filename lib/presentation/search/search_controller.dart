@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quick_shopping/domain/usecases/watch_recent_keywords.dart';
+import 'package:quick_shopping/domain/usecases/keyword/watch_recent_keywords.dart';
 
-import '../../domain/usecases/clear_recent_keyword.dart';
-import '../../domain/usecases/delete_recent_keyword.dart';
-import '../../domain/usecases/insert_recent_keyword.dart';
-import '../../domain/usecases/watch_search.dart';
+import '../../domain/usecases/keyword/clear_recent_keyword.dart';
+import '../../domain/usecases/keyword/delete_recent_keyword.dart';
+import '../../domain/usecases/keyword/insert_recent_keyword.dart';
+import '../../domain/usecases/product/search/watch_search.dart';
 
 class RecentKeyword {
   final String keyword;

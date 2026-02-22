@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 import '../../domain/entities/product_entity.dart';
 import '../../domain/entities/category_entity.dart';
-import '../../domain/usecases/sync_store.dart';
-import '../../domain/usecases/watch_products.dart';
+import '../../domain/usecases/product/sync_product.dart';
+import '../../domain/usecases/product/watch_products.dart';
 import '../../domain/usecases/watch_categories.dart';
 
 class HomeController extends GetxController {
