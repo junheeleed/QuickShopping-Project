@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final gridSpacing = ResponsiveLayout.gridSpacing(context);
     final logoFont = isCompact ? 22.sp : 24.sp;
     final sectionTitleFont = isCompact ? 18.sp : 20.sp;
-    final appBarHeight = isCompact ? 56.0 : 60.0;
+    final appBarHeight = ResponsiveLayout.appBarHeight(context);
     final iconSize = isCompact ? 22.w : 24.w;
 
     return Scaffold(

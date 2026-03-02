@@ -14,6 +14,17 @@ class ResponsiveLayout {
   static bool isMedium(BuildContext context) => size(context) == ScreenSize.medium;
   static bool isExpanded(BuildContext context) => size(context) == ScreenSize.expanded;
 
+  static double appBarHeight(BuildContext context) {
+    switch (size(context)) {
+      case ScreenSize.compact:
+        return 56.0;
+      case ScreenSize.medium:
+        return 60.0;
+      case ScreenSize.expanded:
+        return 64.0;
+    }
+  }
+
   static double pagePadding(BuildContext context) {
     switch (size(context)) {
       case ScreenSize.compact:
@@ -44,6 +55,17 @@ class ResponsiveLayout {
         return 14;
       case ScreenSize.expanded:
         return 16;
+    }
+  }
+
+  static double textSize(BuildContext context) {
+    switch (size(context)) {
+      case ScreenSize.compact:
+        return 14;
+      case ScreenSize.medium:
+        return 16;
+      case ScreenSize.expanded:
+        return 18;
     }
   }
 
