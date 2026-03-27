@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../domain/auth/auth_exceptions.dart';
 import '../my/my_controller.dart';
+import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 import 'auth_validators.dart';
 
 class SignupResult {
@@ -19,8 +21,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  static const _purple = Color(0xFF7B61FF);
-
   final _email = TextEditingController();
   final _pw = TextEditingController();
   final _pwCheck = TextEditingController();
@@ -34,91 +34,95 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: colors.textPrimary),
           onPressed: () => Get.back(),
         ),
-        title: const Text('회원가입',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900)),
+        title: Text('회원가입', style: context.text.titleLarge),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              const Text('간단 회원가입',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 6),
-              const Text('가입 후 로그인 화면으로 돌아갑니다.',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(height: 24),
-
-              _Field(
-                controller: _email,
-                hint: '이메일',
-                icon: Icons.mail_outline,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                errorText: _emailError,
-                onChanged: (_) => _clearEmailError(),
-              ),
-              const SizedBox(height: 12),
-
-              _PasswordField(
-                controller: _pw,
-                hint: '비밀번호',
-                icon: Icons.lock_outline,
-                obscure: _obscure,
-                onToggle: () => setState(() => _obscure = !_obscure),
-                textInputAction: TextInputAction.next,
-                errorText: _pwError,
-                helperText: '8자 이상 · 영문/숫자 포함',
-                onChanged: (_) => _clearPwError(),
-              ),
-              const SizedBox(height: 12),
-
-              _PasswordField(
-                controller: _pwCheck,
-                hint: '비밀번호 확인',
-                icon: Icons.lock_outline,
-                obscure: _obscureCheck,
-                onToggle: () => setState(() => _obscureCheck = !_obscureCheck),
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _submit(),
-                errorText: _pwCheckError,
-                onChanged: (_) => _clearPwCheckError(),
-              ),
-              const SizedBox(height: 18),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _purple,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
-                  ),
-                  onPressed: _submit,
-                  child: const Text('가입하기',
-                      style:
-                      TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+        child: ResponsiveContent(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              spacing.pagePaddingX,
+              spacing.itemGap,
+              spacing.pagePaddingX,
+              spacing.sectionGap,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: spacing.itemGap),
+                Text(
+                  '간단 회원가입',
+                  style: context.text.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                 ),
-              ),
+                const SizedBox(height: 6),
+                Text(
+                  '가입 후 로그인 화면으로 돌아갑니다.',
+                  style: context.text.bodyMedium?.copyWith(
+                    color: colors.textSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: spacing.sectionGap * 2),
 
-              const Spacer(),
-            ],
+                _ThemedField(
+                  controller: _email,
+                  hint: '이메일',
+                  icon: Icons.mail_outline,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  errorText: _emailError,
+                  onChanged: (_) => _clearEmailError(),
+                ),
+                SizedBox(height: spacing.sectionGap),
+
+                _ThemedPasswordField(
+                  controller: _pw,
+                  hint: '비밀번호',
+                  icon: Icons.lock_outline,
+                  obscure: _obscure,
+                  onToggle: () => setState(() => _obscure = !_obscure),
+                  textInputAction: TextInputAction.next,
+                  errorText: _pwError,
+                  helperText: '8자 이상 · 영문/숫자 포함',
+                  onChanged: (_) => _clearPwError(),
+                ),
+                SizedBox(height: spacing.sectionGap),
+
+                _ThemedPasswordField(
+                  controller: _pwCheck,
+                  hint: '비밀번호 확인',
+                  icon: Icons.lock_outline,
+                  obscure: _obscureCheck,
+                  onToggle: () => setState(() => _obscureCheck = !_obscureCheck),
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _submit(),
+                  errorText: _pwCheckError,
+                  onChanged: (_) => _clearPwCheckError(),
+                ),
+
+                SizedBox(height: spacing.sectionGap * 1.5),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: context.fields.height,
+                  child: ElevatedButton(
+                    onPressed: _submit,
+                    child: Text('가입하기', style: context.text.labelLarge?.copyWith(color: colors.brandOn)),
+                  ),
+                ),
+
+                const Spacer(),
+              ],
+            ),
           ),
         ),
       ),
@@ -200,7 +204,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 }
 
-class _Field extends StatelessWidget {
+class _ThemedField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
@@ -209,7 +213,7 @@ class _Field extends StatelessWidget {
   final String? errorText;
   final ValueChanged<String>? onChanged;
 
-  const _Field({
+  const _ThemedField({
     required this.controller,
     required this.hint,
     required this.icon,
@@ -221,34 +225,40 @@ class _Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final fields = context.fields;
+    final spacing = context.spacing;
+
     final showError = errorText != null && errorText!.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          height: fields.height,
+          padding: EdgeInsets.symmetric(horizontal: fields.horizontalPadding),
           decoration: BoxDecoration(
+            color: colors.surface,
             border: Border.all(
-              color: showError ? const Color(0xFFE14B4B) : const Color(0xFFE7E7E7),
+              color: showError ? colors.error : colors.border,
+              width: fields.borderWidth,
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(fields.radius),
           ),
           child: Row(
             children: [
-              Icon(icon, color: Colors.black54),
-              const SizedBox(width: 10),
+              Icon(icon, size: 18, color: colors.textSecondary),
+              SizedBox(width: spacing.itemGap),
               Expanded(
                 child: TextField(
                   controller: controller,
                   keyboardType: keyboardType,
                   textInputAction: textInputAction,
                   onChanged: onChanged,
+                  style: context.text.bodyMedium,
                   decoration: InputDecoration(
                     hintText: hint,
-                    border: InputBorder.none,
-                    isDense: true,
+                    hintStyle: context.text.bodyMedium?.copyWith(color: colors.textTertiary),
                   ),
                 ),
               ),
@@ -256,12 +266,11 @@ class _Field extends StatelessWidget {
           ),
         ),
         if (showError) ...[
-          const SizedBox(height: 6),
+          SizedBox(height: spacing.itemGap),
           Text(
             errorText!,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFFE14B4B),
+            style: context.text.bodySmall?.copyWith(
+              color: colors.error,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -271,7 +280,7 @@ class _Field extends StatelessWidget {
   }
 }
 
-class _PasswordField extends StatelessWidget {
+class _ThemedPasswordField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
@@ -283,7 +292,7 @@ class _PasswordField extends StatelessWidget {
   final String? helperText;
   final ValueChanged<String>? onChanged;
 
-  const _PasswordField({
+  const _ThemedPasswordField({
     required this.controller,
     required this.hint,
     required this.icon,
@@ -298,24 +307,30 @@ class _PasswordField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final fields = context.fields;
+    final spacing = context.spacing;
+
     final showError = errorText != null && errorText!.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          height: fields.height,
+          padding: EdgeInsets.symmetric(horizontal: fields.horizontalPadding),
           decoration: BoxDecoration(
+            color: colors.surface,
             border: Border.all(
-              color: showError ? const Color(0xFFE14B4B) : const Color(0xFFE7E7E7),
+              color: showError ? colors.error : colors.border,
+              width: fields.borderWidth,
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(fields.radius),
           ),
           child: Row(
             children: [
-              Icon(icon, color: Colors.black54),
-              const SizedBox(width: 10),
+              Icon(icon, size: 18, color: colors.textSecondary),
+              SizedBox(width: spacing.itemGap),
               Expanded(
                 child: TextField(
                   controller: controller,
@@ -323,10 +338,10 @@ class _PasswordField extends StatelessWidget {
                   textInputAction: textInputAction,
                   onSubmitted: onSubmitted,
                   onChanged: onChanged,
+                  style: context.text.bodyMedium,
                   decoration: InputDecoration(
                     hintText: hint,
-                    border: InputBorder.none,
-                    isDense: true,
+                    hintStyle: context.text.bodyMedium?.copyWith(color: colors.textTertiary),
                   ),
                 ),
               ),
@@ -334,28 +349,26 @@ class _PasswordField extends StatelessWidget {
                 onPressed: onToggle,
                 icon: Icon(
                   obscure ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.black45,
+                  color: colors.textTertiary,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: spacing.itemGap),
         if (showError)
           Text(
             errorText!,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFFE14B4B),
+            style: context.text.bodySmall?.copyWith(
+              color: colors.error,
               fontWeight: FontWeight.w800,
             ),
           )
         else if (helperText != null)
           Text(
             helperText!,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black38,
+            style: context.text.bodySmall?.copyWith(
+              color: colors.textTertiary,
               fontWeight: FontWeight.w800,
             ),
           ),

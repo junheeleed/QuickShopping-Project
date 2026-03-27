@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../home/home_page.dart';
 import '../search/search_page.dart';
 import '../my/my_page.dart';
+import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 import 'root_controller.dart';
 
 class RootPage extends StatelessWidget {
@@ -14,7 +16,12 @@ class RootPage extends StatelessWidget {
     final controller = Get.put(RootController());
 
     return Obx(() {
+      final colors = context.colors;
+
       final tabIndex = controller.tabIndex.value;
+
+      final bottomNavHeight = ResponsiveLayout.isCompact(context) ? 70.0 : 72.0;
+
       return Scaffold(
         body: IndexedStack(
           index: tabIndex,
@@ -28,10 +35,10 @@ class RootPage extends StatelessWidget {
         bottomNavigationBar: SafeArea(
           top: false,
           child: Container(
-            height: 70,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xFFEDEDED))),
+            height: bottomNavHeight,
+            decoration: BoxDecoration(
+              color: colors.surface,
+              border: Border(top: BorderSide(color: colors.divider)),
             ),
             child: Row(
               children: [
@@ -82,7 +89,16 @@ class _BottomItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? Colors.black : Colors.black54;
+    final colors = context.colors;
+    final spacing = context.spacing;
+
+    final color = selected ? colors.textPrimary : colors.textSecondary;
+
+    final double labelSize = ResponsiveLayout.isCompact(context)
+        ? 12
+        : (ResponsiveLayout.isMedium(context) ? 13 : 14);
+
+    final double iconSize = ResponsiveLayout.isCompact(context) ? 26 : 28;
 
     return Expanded(
       child: InkWell(
@@ -90,12 +106,16 @@ class _BottomItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(selected ? selectedIcon : icon, size: 26, color: color),
-            const SizedBox(height: 4),
+            Icon(
+              selected ? selectedIcon : icon,
+              size: iconSize,
+              color: color,
+            ),
+            SizedBox(height: spacing.itemGap / 2),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: labelSize,
                 fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
                 color: color,
               ),

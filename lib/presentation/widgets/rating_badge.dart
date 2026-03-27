@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/theme_x.dart';
 
 class RatingBadge extends StatelessWidget {
   final double rating;
@@ -8,13 +9,28 @@ class RatingBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     return Row(
       children: [
-        const Icon(Icons.star, size: 16),
+        Icon(Icons.star, size: 18, color: colors.textPrimary),
         const SizedBox(width: 4),
-        Text(rating.toStringAsFixed(1)),
-        const SizedBox(width: 6),
-        Text('($count)', style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          rating.toStringAsFixed(1),
+          style: context.text.bodySmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: colors.textPrimary,
+          ),
+        ),
+        SizedBox(width: spacing.itemGap),
+        Text(
+          '($count)',
+          style: context.text.bodySmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: colors.textSecondary,
+          ),
+        ),
       ],
     );
   }

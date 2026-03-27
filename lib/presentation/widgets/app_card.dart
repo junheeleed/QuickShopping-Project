@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/product_entity.dart';
-import 'rating_badge.dart';
+import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 
 class AppCard extends StatelessWidget {
   final ProductEntity app;
   final VoidCallback onTap;
-
   final bool compact;
 
   const AppCard({
@@ -21,17 +21,21 @@ class AppCard extends StatelessWidget {
   }
 
   Widget _baseContainer({
+    required BuildContext context,
     required Widget child,
     required VoidCallback onTap,
   }) {
+    final colors = context.colors;
+    final radius = context.radius;
+
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(radius.card),
       onTap: onTap,
       child: Ink(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFEAEAEA)),
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(radius.card),
+          border: Border.all(color: colors.border),
         ),
         child: child,
       ),
@@ -39,26 +43,48 @@ class AppCard extends StatelessWidget {
   }
 
   Widget _listCard(BuildContext context) {
+    final colors = context.colors;
+    final spacing = context.spacing;
+    final imageSize = ResponsiveLayout.isCompact(context) ? 50.0 : 56.0;
+
     return _baseContainer(
+      context: context,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(spacing.cardPadding),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: const Color(0xFFF2F2F2),
-              child: const Icon(Icons.apps),
+            _ProductImage(
+              imageUrl: app.imageUrl,
+              size: imageSize,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: spacing.cardPadding),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(app.name, style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    app.name,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: context.text.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      height: 1.2,
+                      color: colors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(app.shortDesc, maxLines: 2, overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 8),
+                  Text(
+                    app.shortDesc,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.bodySmall?.copyWith(
+                      color: colors.textSecondary,
+                      fontWeight: FontWeight.w700,
+                      height: 1.25,
+                    ),
+                  ),
+                  SizedBox(height: spacing.itemGap),
                 ],
               ),
             ),
@@ -69,60 +95,65 @@ class AppCard extends StatelessWidget {
   }
 
   Widget _compactCard(BuildContext context) {
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     final price = app.price ?? 0;
     final ship = app.shippingFee ?? 0;
 
+    // 컴팩트 카드 텍스트는 화면 특화라 단계형으로만
+    final nameSize = ResponsiveLayout.isCompact(context) ? 14.0 : 15.0;
+    final priceSize = ResponsiveLayout.isCompact(context) ? 13.0 : 14.0;
+    final shipSize = ResponsiveLayout.isCompact(context) ? 12.0 : 13.0;
+
+    final imgSize = ResponsiveLayout.isCompact(context) ? 63.0 : 72.0;
+
     return _baseContainer(
+      context: context,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(spacing.itemGap + 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _ProductImage(
               imageUrl: app.imageUrl,
-              size: 63,
-              radius: 14,
+              size: imgSize,
             ),
-            const SizedBox(height: 8),
-
+            SizedBox(height: spacing.itemGap),
             Text(
               app.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 17,
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: nameSize,
                 height: 1.1,
+                color: colors.textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
-
-            Row(
-              children: [
-                Text(
-                  '${_comma(price)}원',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 16,
-                    height: 1.1,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 4),
+            Text(
+              '${_comma(price)}원',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                fontSize: priceSize,
+                height: 1.1,
+                color: colors.textPrimary,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               ship == 0 ? '무료배송' : '배송 ${_comma(ship)}원',
-              style: const TextStyle(
-                color: Colors.black54,
+              style: context.text.bodySmall?.copyWith(
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w700,
-                fontSize: 12,
+                fontSize: shipSize,
                 height: 1.1,
               ),
             ),
-
             const Spacer(),
           ],
         ),
@@ -145,31 +176,36 @@ class AppCard extends StatelessWidget {
 class _ProductImage extends StatelessWidget {
   final String? imageUrl;
   final double size;
-  final double radius;
 
   const _ProductImage({
     required this.imageUrl,
-    this.size = 40,
-    this.radius = 12,
+    required this.size,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final radius = context.radius;
+
     if (imageUrl == null || imageUrl!.isEmpty) {
       return Container(
         width: size,
         height: size,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFFF2F2F2),
-          borderRadius: BorderRadius.circular(radius),
+          color: colors.surfaceAlt,
+          borderRadius: BorderRadius.circular(radius.image),
         ),
-        child: const Icon(Icons.local_mall_outlined, size: 20, color: Colors.black54),
+        child: Icon(
+          Icons.local_mall_outlined,
+          size: 22,
+          color: colors.textSecondary,
+        ),
       );
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
+      borderRadius: BorderRadius.circular(radius.image),
       child: SizedBox(
         width: size,
         height: size,
@@ -178,8 +214,12 @@ class _ProductImage extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
             alignment: Alignment.center,
-            color: const Color(0xFFF2F2F2),
-            child: const Icon(Icons.local_mall_outlined, size: 20, color: Colors.black54),
+            color: colors.surfaceAlt,
+            child: Icon(
+              Icons.local_mall_outlined,
+              size: 22,
+              color: colors.textSecondary,
+            ),
           ),
         ),
       ),

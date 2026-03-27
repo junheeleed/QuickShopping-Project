@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quick_shopping/presentation/responsive/responsive.dart';
+
 import '../../app/routes/app_routes.dart';
+import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 import 'my_controller.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
@@ -11,36 +12,43 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<MyController>();
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final pagePadding = ResponsiveLayout.pagePadding(context);
-    final logoFont = isCompact ? 22.sp : 24.sp;
-    final appBarHeight = ResponsiveLayout.appBarHeight(context);
+
+    final colors = context.colors;
+    final spacing = context.spacing;
+
+    final padX = spacing.pagePaddingX;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F9),
+      backgroundColor: colors.surfaceAlt,
       body: SafeArea(
         child: Obx(() {
           final profile = controller.profile.value;
+
           return CustomScrollView(
             slivers: [
               SliverAppBar(
                 pinned: true,
                 elevation: 0,
-                backgroundColor: Colors.white,
-                titleSpacing: pagePadding.w,
-                toolbarHeight: appBarHeight,
+                backgroundColor: colors.background,
+                surfaceTintColor: colors.background,
+                titleSpacing: padX,
+                toolbarHeight: ResponsiveLayout.appBarHeight(context),
                 title: Text(
                   '마이',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                      fontSize: logoFont
+                  style: context.text.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900
                   ),
                 ),
               ),
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(pagePadding.w, 12.h, pagePadding.w, 12.h),
+                  padding: EdgeInsets.fromLTRB(
+                    padX,
+                    spacing.sectionGap,
+                    padX,
+                    spacing.sectionGap,
+                  ),
                   child: profile.isLoggedIn
                       ? _ProfileCard(
                     nickname: profile.nickname ?? '사용자',
@@ -53,7 +61,12 @@ class MyPage extends StatelessWidget {
 
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(pagePadding.w, 0, pagePadding.w, 16.h),
+                  padding: EdgeInsets.fromLTRB(
+                    padX,
+                    0,
+                    padX,
+                    spacing.sectionGap,
+                  ),
                   child: _MenuCard(
                     isLoggedIn: profile.isLoggedIn,
                     onRequireLogin: () => Get.toNamed(Routes.login),
@@ -72,55 +85,47 @@ class _GuestCard extends StatelessWidget {
   final VoidCallback onLogin;
   const _GuestCard({required this.onLogin});
 
-  static const _purple = Color(0xFF7B61FF);
-
   @override
   Widget build(BuildContext context) {
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final textSize = ResponsiveLayout.textSize(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+    final radius = context.radius;
+
     return Container(
-      padding: EdgeInsets.all(18.r),
+      padding: EdgeInsets.all(spacing.cardPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(radius.card),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '로그인하고\n더 많은 혜택을 받아보세요',
-            style: TextStyle(
-                fontSize: isCompact ? 18.sp : 20.sp,
-                fontWeight: FontWeight.w900,
-                height: 1.15
+            style: context.text.titleLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+              height: 1.15,
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: spacing.itemGap),
           Text(
             '주문/배송 조회, 찜, 최근 본 상품을 한 번에.',
-            style: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.w700,
-                fontSize: textSize
+            style: context.text.bodyMedium?.copyWith(
+              color: colors.textSecondary,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: spacing.sectionGap),
+
           SizedBox(
             width: double.infinity,
-            height: 48.h,
+            height: context.fields.height,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _purple,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              ),
               onPressed: onLogin,
               child: Text(
                 '로그인',
-                style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: isCompact ? 16.sp : 18.sp,
-                    color: Colors.white
-                ),
+                style: context.text.labelLarge?.copyWith(color: colors.brandOn),
               ),
             ),
           ),
@@ -141,50 +146,52 @@ class _ProfileCard extends StatelessWidget {
     required this.onLogout,
   });
 
-  static const _purple = Color(0xFF7B61FF);
-
   @override
   Widget build(BuildContext context) {
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final textSize = ResponsiveLayout.textSize(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+    final radius = context.radius;
+
+    final avatarSize = ResponsiveLayout.isCompact(context) ? 54.0 : 60.0;
+
     return Container(
-      padding: EdgeInsets.all(18.r),
+      padding: EdgeInsets.all(spacing.cardPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(radius.card),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
           Container(
-            width: 54.w,
-            height: 54.w,
+            width: avatarSize,
+            height: avatarSize,
             decoration: BoxDecoration(
-              color: _purple.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(16.r),
+              color: colors.brand.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(radius.image),
             ),
-            child: const Icon(Icons.person, color: _purple),
+            child: Icon(Icons.person, color: colors.brand),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: spacing.cardPadding),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '$nickname님',
-                  style: TextStyle(
-                      fontSize: isCompact ? 18.sp : 20.sp,
-                      fontWeight: FontWeight.w900
+                  style: context.text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: colors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                const SizedBox(height: 4),
                 Text(
                   email,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.black54,
+                  style: context.text.bodyMedium?.copyWith(
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w700,
-                    fontSize: textSize
                   ),
                 ),
               ],
@@ -194,9 +201,8 @@ class _ProfileCard extends StatelessWidget {
             onPressed: onLogout,
             child: Text(
               '로그아웃',
-              style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: textSize
+              style: context.text.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w900
               ),
             ),
           ),
@@ -225,8 +231,15 @@ class _MenuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final radius = context.radius;
+
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18.r)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(radius.card),
+        border: Border.all(color: colors.border),
+      ),
       child: Column(
         children: [
           _MenuTile(
@@ -247,7 +260,7 @@ class _MenuCard extends StatelessWidget {
             locked: !isLoggedIn,
             onTap: () => _guard(() {}),
           ),
-          const Divider(height: 1, color: Color(0xFFF0F0F0)),
+          Divider(height: 1, color: colors.divider),
           _MenuTile(
             icon: Icons.support_agent,
             title: '고객센터',
@@ -279,28 +292,24 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final textSize = ResponsiveLayout.textSize(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     return ListTile(
       dense: true,
-      contentPadding: EdgeInsets.symmetric(horizontal: 14.w),
-      leading: Icon(icon, color: Colors.black87),
+      contentPadding: EdgeInsets.symmetric(horizontal: spacing.cardPadding),
+      leading: Icon(icon, size: 22, color: colors.textPrimary),
       title: Text(
-          title,
-          style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: textSize
-          )
+        title,
+        style: context.text.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: colors.textPrimary,
+        ),
       ),
-      trailing: locked
-          ? Icon(
-          Icons.lock_outline,
-          color: Colors.black38,
-          size: isCompact ? 20.w : 22.w
-      ) : Icon(
-          Icons.chevron_right,
-          color: Colors.black38,
-          size: isCompact ? 20.w : 22.w
+      trailing: Icon(
+        locked ? Icons.lock_outline : Icons.chevron_right,
+        color: colors.textTertiary,
+        size: 22,
       ),
       onTap: onTap,
     );

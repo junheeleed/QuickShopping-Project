@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quick_shopping/domain/entities/home_banner_entity.dart';
+
+import '../../../domain/entities/home_banner_entity.dart';
 import '../../../domain/usecases/banner/get_banner_once.dart';
 import '../../../domain/usecases/banner/insert_banner_all.dart';
 import '../../../domain/usecases/banner/watch_banners.dart';
+import '../../responsive/responsive.dart';
+import '../../theme/theme_x.dart';
 
 class HomeBannerItem {
   final int id;
@@ -103,6 +106,7 @@ class HomeBannerController extends GetxController {
     super.onClose();
   }
 }
+
 class HomeBannerCarousel extends StatelessWidget {
   const HomeBannerCarousel({super.key});
 
@@ -111,16 +115,20 @@ class HomeBannerCarousel extends StatelessWidget {
     final controller = Get.find<HomeBannerController>();
 
     return Obx(() {
+      final spacing = context.spacing;
       final list = controller.banners;
       final idx = controller.current.value;
       final total = list.length;
 
       if (list.isEmpty) return const SizedBox.shrink();
 
+      final double height = ResponsiveLayout.isCompact(context)
+          ? 190 : (ResponsiveLayout.isMedium(context) ? 210 : 230);
+
       return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+        padding: EdgeInsets.only(bottom: spacing.sectionGap),
         child: SizedBox(
-          height: 200,
+          height: height,
           child: Stack(
             children: [
               PageView.builder(
@@ -129,10 +137,9 @@ class HomeBannerCarousel extends StatelessWidget {
                 onPageChanged: controller.setCurrent,
                 itemBuilder: (_, i) => _BannerCard(item: list[i]),
               ),
-
               Positioned(
-                right: 14,
-                bottom: 14,
+                right: spacing.cardPadding,
+                bottom: spacing.cardPadding,
                 child: _PagePill(
                   index: idx + 1,
                   total: total,
@@ -154,13 +161,16 @@ class _BannerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spacing = context.spacing;
+    final radius = context.radius;
+    final type = context.text;
     final hasImage = item.imageUrl != null && item.imageUrl!.isNotEmpty;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final bannerW = constraints.maxWidth;
         final imageW = hasImage ? (bannerW * 0.36) : 0.0;
-        final rightGap = hasImage ? (imageW + 18) : 18.0;
+        final rightGap = hasImage ? (imageW + spacing.cardPadding) : spacing.cardPadding;
 
         return Container(
           decoration: BoxDecoration(
@@ -169,81 +179,89 @@ class _BannerCard extends StatelessWidget {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
+            borderRadius: BorderRadius.circular(radius.card),
           ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (hasImage)
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  bottom: 12,
-                  child: SizedBox(
-                    width: imageW,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: Container(
-                        // 이미지가 너무 밋밋하면 살짝 유리카드 느낌 배경
-                        color: Colors.white.withOpacity(0.12),
-                        padding: const EdgeInsets.all(8),
-                        child: Image.network(
-                          item.imageUrl!,
-                          fit: BoxFit.contain,
-                          alignment: Alignment.centerRight,
-                          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(radius.card),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (hasImage)
+                  Positioned(
+                    right: spacing.itemGap,
+                    top: spacing.itemGap,
+                    bottom: spacing.itemGap,
+                    child: SizedBox(
+                      width: imageW,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(radius.image),
+                        child: Container(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          padding: EdgeInsets.all(spacing.itemGap),
+                          child: Image.network(
+                            item.imageUrl!,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerRight,
+                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                          ),
                         ),
                       ),
                     ),
                   ),
+
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.cardPadding,
+                    spacing.cardPadding,
+                    rightGap,
+                    spacing.cardPadding,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: type.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: ResponsiveLayout.isCompact(context) ? 24 : 26,
+                          height: 1.12,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: type.bodyMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: ResponsiveLayout.isCompact(context) ? 15 : 16,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
 
-              Padding(
-                padding: EdgeInsets.fromLTRB(18, 18, rightGap, 18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        height: 1.12,
+                IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withValues(alpha: 0.06),
+                          Colors.black.withValues(alpha: 0.02),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      item.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-              ),
-
-              IgnorePointer(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.black.withOpacity(0.06),
-                        Colors.black.withOpacity(0.02),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -266,14 +284,21 @@ class _PagePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spacing = context.spacing;
+    final radius = context.radius;
+    final type = context.text;
+
     return Material(
-      color: Colors.black.withOpacity(0.35), // TODO
-      borderRadius: BorderRadius.circular(18),
+      color: Colors.black.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(radius.button),
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(radius.button),
         onTap: onToggle,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: EdgeInsets.symmetric(
+            horizontal: spacing.itemGap + 2,
+            vertical: 6,
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -282,13 +307,12 @@ class _PagePill extends StatelessWidget {
                 size: 18,
                 color: Colors.white,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: spacing.itemGap),
               Text(
                 '$index/$total',
-                style: const TextStyle(
+                style: type.bodySmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
-                  fontSize: 16,
                 ),
               ),
             ],

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:quick_shopping/presentation/responsive/responsive.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 import 'detail_controller.dart';
 
 class ProductDetailPage extends StatelessWidget {
   const ProductDetailPage({super.key});
-
-  static const _purple = Color(0xFF7B61FF);
 
   @override
   Widget build(BuildContext context) {
@@ -21,239 +19,258 @@ class ProductDetailPage extends StatelessWidget {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
 
+      final colors = context.colors;
+      final spacing = context.spacing;
+      final radius = context.radius;
+
       final url = detail.url;
-      final store = (detail.storeName).trim();
-      final siteType = (detail.siteType).trim();
+      final store = detail.storeName.trim();
+      final siteType = detail.siteType.trim();
       final price = detail.price ?? 0;
       final ship = detail.shippingFee ?? 0;
 
-      final isCompact = ResponsiveLayout.isCompact(context);
-      final pagePadding = ResponsiveLayout.pagePadding(context);
-      final sectionTitleFont = isCompact ? 18.sp : 20.sp;
-      final appBarHeight = ResponsiveLayout.appBarHeight(context);
-      final textSize = ResponsiveLayout.textSize(context).sp;
+      final heroHeight = ResponsiveLayout.isCompact(context)
+          ? 220.0 : (ResponsiveLayout.isMedium(context) ? 260.0 : 300.0);
+      final priceFont = ResponsiveLayout.isCompact(context)
+          ? 24.0 : (ResponsiveLayout.isMedium(context) ? 26.0 : 28.0);
+      final unitFont = ResponsiveLayout.isCompact(context) ? 16.0 : 18.0;
 
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.background,
         appBar: AppBar(
-          toolbarHeight: appBarHeight,
-          backgroundColor: Colors.white,
-          elevation: 0,
+          toolbarHeight: ResponsiveLayout.appBarHeight(context),
           title: Text(
-            '상품 상세',
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w900,
-                fontSize: sectionTitleFont
-            ),
+              '상품 상세',
+              style: context.text.titleLarge
           ),
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: colors.textPrimary),
+          backgroundColor: colors.background,
+          surfaceTintColor: colors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
         ),
 
         bottomNavigationBar: SafeArea(
           top: false,
           child: Container(
-            padding: EdgeInsets.fromLTRB(pagePadding.w, 10.h, pagePadding.w, 10.h),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xFFE6E6E6))),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              border: Border(top: BorderSide(color: colors.divider)),
             ),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: controller.toggleFavorite,
-                  visualDensity: VisualDensity.compact,
-                  iconSize: isCompact ? 24.w : 26.w,
-                  icon: Icon(
-                    detail.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: detail.isFavorite ? Colors.red : Colors.black87,
-                  ),
+            child: ResponsiveContent(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  spacing.pagePaddingX,
+                  spacing.itemGap,
+                  spacing.pagePaddingX,
+                  spacing.itemGap,
                 ),
-                SizedBox(width: 6.w),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: url.isEmpty ? null : () => _copy(url, context),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: controller.toggleFavorite,
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        detail.isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: detail.isFavorite ? Colors.red : colors.textPrimary,
+                      ),
                     ),
-                    child: Text(
-                        '링크 복사',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: textSize
+                    SizedBox(width: spacing.itemGap),
+
+                    Expanded(
+                      child: SizedBox(
+                        height: context.fields.height,
+                        child: OutlinedButton(
+                          onPressed: url.isEmpty ? null : () => _copy(url, context),
+                          // OutlinedButtonTheme가 이미 Theme에서 잡혀있으므로 여기선 최소만
+                          child: Text(
+                              '링크 복사',
+                              style: context.text.labelLarge
+                          ),
                         ),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                    width: 10.w
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: url.isEmpty ? null : () => _copy(url, context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _purple,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                    SizedBox(width: spacing.itemGap),
+
+                    Expanded(
+                      child: SizedBox(
+                        height: context.fields.height,
+                        child: ElevatedButton(
+                          onPressed: url.isEmpty ? null : () => _copy(url, context),
+                          child: Text(
+                            '스토어 열기',
+                            style: context.text.labelLarge?.copyWith(
+                                color: colors.brandOn
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Text(
-                        '스토어 열기',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: textSize
-                        )
-                    ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
 
-        body: ListView(
-          padding: EdgeInsets.fromLTRB(pagePadding.w, 10.h, pagePadding.w, 16.h),
-          children: [
-            Container(
-              height: isCompact ? 260.h : 300.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18.r),
-                color: const Color(0xFFF3F4F6),
+        body: SafeArea(
+          child: ResponsiveContent(
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                spacing.pagePaddingX,
+                spacing.itemGap,
+                spacing.pagePaddingX,
+                spacing.sectionGap,
               ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18.r),
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: (detail.imageUrl.isEmpty)
-                            ? Icon(Icons.local_mall_outlined, size: 84.w, color: Colors.black38)
-                            : Image.network(
-                          detail.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Icon(Icons.local_mall_outlined, size: 84.w, color: Colors.black38),
+              children: [
+                Container(
+                  height: heroHeight,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(radius.card),
+                    color: colors.surfaceAlt,
+                  ),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(radius.card),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: (detail.imageUrl.isEmpty)
+                                ? Icon(Icons.local_mall_outlined,
+                                size: ResponsiveLayout.isCompact(context) ? 64 : 72,
+                                color: colors.textTertiary)
+                                : Image.network(
+                              detail.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.local_mall_outlined,
+                                size: ResponsiveLayout.isCompact(context) ? 64 : 72,
+                                color: colors.textTertiary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: spacing.itemGap + 4,
+                        top: spacing.itemGap + 4,
+                        child: _Badge(text: siteType.isEmpty ? '쇼핑' : siteType),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: spacing.sectionGap),
+
+                Text(
+                  detail.name,
+                  style: context.text.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+                ),
+
+                const SizedBox(height: 6),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _comma(price),
+                      style: context.text.titleLarge?.copyWith(
+                        fontSize: priceFont,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        '원',
+                        style: context.text.titleMedium?.copyWith(
+                          fontSize: unitFont,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 12,
-                    top: 12,
-                    child: _Badge(text: siteType.isEmpty ? '쇼핑' : siteType),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 14.h),
-            Text(detail.name,
-                style: TextStyle(
-                    fontSize: isCompact ? 20.sp : 22.sp,
-                    fontWeight: FontWeight.w900
-                )
-            ),
-            SizedBox(height: 10.h),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  _comma(price),
-                  style: TextStyle(
-                    fontSize: isCompact ? 20.sp : 22.sp,
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,
-                    color: Colors.black,
-                  ),
+                  ],
                 ),
-                SizedBox(width: 4.w),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 3.h),
-                  child: Text(
-                    '원',
-                    style: TextStyle(
-                        fontSize: isCompact ? 20.sp : 22.sp,
-                        fontWeight: FontWeight.w900),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                Icon(Icons.local_shipping_outlined, size: isCompact ? 18.sp : 20.sp, color: Colors.black54),
-                SizedBox(width: 6.w),
-                Text(
-                  ship == 0 ? '무료배송' : '${_comma(ship)}원',
-                  style: TextStyle(
-                    fontSize: textSize,
-                    fontWeight: FontWeight.w800,
-                    color: ship == 0 ? const Color(0xFF2DB400) : Colors.black54,
-                  ),
-                ),
-                if (store.isNotEmpty) ...[
-                  SizedBox(width: 8.w),
-                  Text('·',
-                      style: TextStyle(
-                          color: Colors.black26,
-                          fontWeight: FontWeight.w900,
-                          fontSize: textSize
-                      )
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      store,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: textSize,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black54
+
+                SizedBox(height: spacing.itemGap),
+
+                Row(
+                  children: [
+                    Icon(Icons.local_shipping_outlined, size: 20, color: colors.textSecondary),
+                    SizedBox(width: spacing.itemGap),
+                    Text(
+                      ship == 0 ? '무료배송' : '${_comma(ship)}원',
+                      style: context.text.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: ship == 0 ? colors.success : colors.textSecondary,
                       ),
                     ),
+                    if (store.isNotEmpty) ...[
+                      SizedBox(width: spacing.itemGap),
+                      Text('·',
+                          style: context.text.bodyMedium?.copyWith(
+                            color: colors.textTertiary,
+                            fontWeight: FontWeight.w900,
+                          )),
+                      SizedBox(width: spacing.itemGap),
+                      Expanded(
+                        child: Text(
+                          store,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodyMedium?.copyWith(
+                            color: colors.textSecondary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+
+                SizedBox(height: spacing.sectionGap * 2),
+
+                Text(
+                  '구매 정보',
+                  style: context.text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900
                   ),
-                ],
+                ),
+                SizedBox(height: spacing.itemGap),
+
+                _PurchaseSummaryCard(
+                  benefitLines: _toLines(detail.benefitInfo),
+                  shippingLines: _toLines(detail.shippingInfo, fallbackShip: ship),
+                  savingTitle: '예상 적립',
+                  savingValue: detail.savingInfo,
+                ),
+
+                SizedBox(height: spacing.sectionGap * 2),
+
+                Text(
+                  '상품 설명',
+                  style: context.text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900
+                  ),
+                ),
+                SizedBox(height: spacing.itemGap),
+
+                Text(
+                  detail.description,
+                  style: context.text.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    height: 1.35,
+                    color: colors.textPrimary,
+                  ),
+                ),
+
+                SizedBox(height: spacing.sectionGap),
               ],
             ),
-            SizedBox(height: 14.h),
-
-            Text('구매 정보',
-                style: TextStyle(
-                    fontSize: isCompact ? 16.sp : 18.sp,
-                    fontWeight: FontWeight.w900
-                )
-            ),
-            SizedBox(height: 10.h),
-
-            _PurchaseSummaryCard(
-              purple: _purple,
-              savingTitle: '예상 적립',
-              savingValue: detail.savingInfo,
-              benefitLines: _toLines(detail.benefitInfo),
-              shippingLines: _toLines(detail.shippingInfo, fallbackShip: ship),
-            ),
-
-
-            SizedBox(height: 18.h),
-            Text('상품 설명',
-                style: TextStyle(
-                    fontSize: isCompact ? 16.sp : 18.sp,
-                    fontWeight: FontWeight.w900,
-                )
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              detail.description,
-              style: TextStyle(
-                fontSize: textSize,
-                fontWeight: FontWeight.w700,
-                height: 1.35,
-              ),
-            ),
-            SizedBox(height: 18.h),
-
-          ],
+          ),
         ),
       );
     });
@@ -284,19 +301,25 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: spacing.itemGap + 2,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95), // TODO
-        borderRadius: BorderRadius.circular(999.r),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        color: colors.surface.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: colors.border),
       ),
       child: Text(
-          text,
-          style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: ResponsiveLayout.textSize(context)
-          )
+        text,
+        style: context.text.bodySmall?.copyWith(
+          fontWeight: FontWeight.w900,
+          color: colors.textPrimary,
+        ),
       ),
     );
   }
@@ -317,16 +340,12 @@ List<String> _toLines(String? text, {int? fallbackShip}) {
 }
 
 class _PurchaseSummaryCard extends StatelessWidget {
-  final Color purple;
-
   final String savingTitle;
   final String? savingValue;
-
   final List<String> benefitLines;
   final List<String> shippingLines;
 
   const _PurchaseSummaryCard({
-    required this.purple,
     required this.savingTitle,
     required this.savingValue,
     required this.benefitLines,
@@ -335,13 +354,16 @@ class _PurchaseSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pagePadding = ResponsiveLayout.pagePadding(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+    final radius = context.radius;
+
     return Container(
-      padding: EdgeInsets.fromLTRB(pagePadding, 14.h, pagePadding, 14.h),
+      padding: EdgeInsets.all(spacing.cardPadding),
       decoration: BoxDecoration(
-        color: const Color(0xFFF6F7F9),
-        borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        color: colors.surfaceAlt,
+        borderRadius: BorderRadius.circular(radius.card),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
@@ -353,28 +375,26 @@ class _PurchaseSummaryCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     savingTitle,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
-                        fontSize: ResponsiveLayout.textSize(context)
+                    style: context.text.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),
                 Text(
                   (savingValue ?? '').trim().isEmpty ? '—' : savingValue!.trim(),
-                  style: TextStyle(
+                  style: context.text.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w900,
-                    color: purple,
-                    fontSize: 15.sp,
+                    color: colors.brand,
                   ),
                 ),
               ],
             ),
           ),
 
-          SizedBox(height: 12.h),
-          Divider(height: 1, color: Color(0xFFE6E6E6)),
-          SizedBox(height: 12.h),
+          SizedBox(height: spacing.sectionGap),
+          Divider(height: 1, color: colors.divider),
+          SizedBox(height: spacing.sectionGap),
 
           _Section(
             icon: Icons.local_offer_outlined,
@@ -382,9 +402,9 @@ class _PurchaseSummaryCard extends StatelessWidget {
             child: _BulletLines(lines: benefitLines.isEmpty ? const ['혜택 정보가 아직 없어요.'] : benefitLines),
           ),
 
-          SizedBox(height: 12.h),
-          const Divider(height: 1, color: Color(0xFFE6E6E6)),
-          SizedBox(height: 12.h),
+          SizedBox(height: spacing.sectionGap),
+          Divider(height: 1, color: colors.divider),
+          SizedBox(height: spacing.sectionGap),
 
           _Section(
             icon: Icons.local_shipping_outlined,
@@ -410,25 +430,26 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompat = ResponsiveLayout.isCompact(context);
-    final fontSize = ResponsiveLayout.textSize(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+
+    const labelWidth = 52.0;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: isCompat ? 20.w : 22.w, color: Colors.black54),
-        SizedBox(width: 10.w),
+        Icon(icon, size: 20, color: colors.textSecondary),
+        SizedBox(width: spacing.itemGap + 2),
         SizedBox(
-          width: 44.w,
+          width: labelWidth,
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: fontSize,
-              color: Colors.black54,
+            style: context.text.bodySmall?.copyWith(
+              color: colors.textSecondary,
               fontWeight: FontWeight.w900,
             ),
           ),
         ),
-        SizedBox(width: 10.w),
+        SizedBox(width: spacing.itemGap + 2),
         Expanded(child: child),
       ],
     );
@@ -441,37 +462,21 @@ class _BulletLines extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final fontSize = ResponsiveLayout.textSize(context);
+    final colors = context.colors;
+    final spacing = context.spacing;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: lines.map((text) {
         return Padding(
-          padding: EdgeInsets.only(bottom: 6.h),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 6.h),
-                child: Icon(
-                    Icons.circle,
-                    size: isCompact ? 6.w : 8.w,
-                    color: Colors.black26
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black87,
-                    height: 1.25,
-                  ),
-                ),
-              ),
-            ],
+          padding: EdgeInsets.only(bottom: spacing.itemGap),
+          child: Text(
+            text,
+            style: context.text.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+              height: 1.25,
+            ),
           ),
         );
       }).toList(),

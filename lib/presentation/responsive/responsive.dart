@@ -14,14 +14,14 @@ class ResponsiveLayout {
   static bool isMedium(BuildContext context) => size(context) == ScreenSize.medium;
   static bool isExpanded(BuildContext context) => size(context) == ScreenSize.expanded;
 
-  static double appBarHeight(BuildContext context) {
+  static double maxContentWidth(BuildContext context) {
     switch (size(context)) {
       case ScreenSize.compact:
-        return 56.0;
+        return double.infinity;
       case ScreenSize.medium:
-        return 60.0;
+        return 960;
       case ScreenSize.expanded:
-        return 64.0;
+        return 1200;
     }
   }
 
@@ -58,25 +58,14 @@ class ResponsiveLayout {
     }
   }
 
-  static double textSize(BuildContext context) {
+  static double appBarHeight(BuildContext context) {
     switch (size(context)) {
       case ScreenSize.compact:
-        return 14;
+        return kToolbarHeight; // 56
       case ScreenSize.medium:
-        return 16;
+        return 60;
       case ScreenSize.expanded:
-        return 18;
-    }
-  }
-
-  static double maxContentWidth(BuildContext context) {
-    switch (size(context)) {
-      case ScreenSize.compact:
-        return double.infinity;
-      case ScreenSize.medium:
-        return 960;
-      case ScreenSize.expanded:
-        return 1200;
+        return 64;
     }
   }
 
@@ -99,6 +88,23 @@ class ResponsiveLayout {
     if (count == 3) return 0.92;
     return 0.98;
   }
+
+  static EdgeInsets pagePaddingInsets(BuildContext context) =>
+      EdgeInsets.symmetric(horizontal: pagePadding(context));
+
+  static EdgeInsets gridPaddingInsets(BuildContext context) =>
+      EdgeInsets.symmetric(horizontal: gridPadding(context));
+
+  static Widget constrainContent(BuildContext context, Widget child) {
+    final maxW = maxContentWidth(context);
+    if (maxW == double.infinity) return child;
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxW),
+        child: child,
+      ),
+    );
+  }
 }
 
 class ResponsiveContent extends StatelessWidget {
@@ -107,14 +113,6 @@ class ResponsiveContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxW = ResponsiveLayout.maxContentWidth(context);
-    if (maxW == double.infinity) return child;
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxW),
-        child: child,
-      ),
-    );
+    return ResponsiveLayout.constrainContent(context, child);
   }
 }

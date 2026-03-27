@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:quick_shopping/presentation/home/widget/home_banner_carousel.dart';
 import 'package:quick_shopping/presentation/home/widget/home_skeleton.dart';
 import '../../app/routes/app_routes.dart';
 import '../responsive/responsive.dart';
+import '../theme/theme_x.dart';
 import '../widgets/app_card.dart';
 import 'home_controller.dart';
 
@@ -35,34 +35,34 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final isCompact = ResponsiveLayout.isCompact(context);
-    final pagePadding = ResponsiveLayout.pagePadding(context);
-    final gridPadding = ResponsiveLayout.gridPadding(context);
-    final gridSpacing = ResponsiveLayout.gridSpacing(context);
-    final logoFont = isCompact ? 22.sp : 24.sp;
-    final sectionTitleFont = isCompact ? 18.sp : 20.sp;
-    final appBarHeight = ResponsiveLayout.appBarHeight(context);
-    final iconSize = isCompact ? 22.w : 24.w;
+    final colors = context.colors;
+    final spacing = context.spacing;
+
+    final padX = spacing.pagePaddingX;
+    final gridPadX = spacing.pagePaddingX;
+    final gridSpacing = spacing.gridSpacing;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
-            backgroundColor: Colors.white,
+            backgroundColor: colors.background,
+            surfaceTintColor: colors.background,
             elevation: 0,
             scrolledUnderElevation: 0,
-            titleSpacing: pagePadding.w,
-            toolbarHeight: appBarHeight,
+            titleSpacing: padX,
+            toolbarHeight: ResponsiveLayout.appBarHeight(context),
             title: Row(
               children: [
                 RichText(
                   text: TextSpan(
                     style: TextStyle(
-                      fontSize: logoFont,
+                      fontSize: ResponsiveLayout.isCompact(context) ? 22 : 24,
                       fontWeight: FontWeight.w900,
                       height: 1.0,
+                      color: colors.textPrimary,
                     ),
                     children: const [
                       TextSpan(text: '퀵', style: TextStyle(color: Color(0xFF2DB400))),
@@ -75,17 +75,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             actions: [
               IconButton(
                 onPressed: () {},
-                iconSize: iconSize,
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.notifications_none, color: Colors.black87),
+                icon: Icon(Icons.notifications_none, color: colors.textPrimary),
               ),
               IconButton(
                 onPressed: () {},
-                iconSize: iconSize,
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87),
+                icon: Icon(Icons.shopping_bag_outlined, color: colors.textPrimary),
               ),
-              SizedBox(width: (isCompact ? 6 : 8).w),
+              SizedBox(width: spacing.itemGap),
             ],
           ),
 
@@ -98,119 +96,115 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               }
 
               return ResponsiveContent(
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const HomeBannerCarousel(),
-                      SizedBox(height: 12.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const HomeBannerCarousel(),
+                    SizedBox(height: spacing.sectionGap),
 
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: pagePadding.w),
-                        child: Text(
-                          '주목할 만한 상품',
-                          style: TextStyle(
-                            fontSize: sectionTitleFont,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black,
-                            height: 1.1,
-                          ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padX),
+                      child: Text(
+                        '주목할 만한 상품',
+                        style: context.text.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: colors.textPrimary,
+                          height: 1.1,
                         ),
                       ),
-                      SizedBox(height: 10.h),
+                    ),
+                    SizedBox(height: spacing.itemGap),
 
-                      Obx(() {
-                        if (controller.isLoading.value) {
-                          return const HomeSkeleton(onlyGrid: true);
-                        }
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return const HomeSkeleton(onlyGrid: true);
+                      }
 
-                        final list = controller.products;
+                      final list = controller.products;
 
-                        if (isCompact) {
-                          final tileHeight = 170.h;
-                          final crossSpacing = 12.w;
+                      // 폰: 기존 UX 유지(가로 스크롤 + 2행)
+                      if (ResponsiveLayout.isCompact(context)) {
+                        const double tileHeight = 170;
+                        const double crossSpacing = 12;
 
-                          final padding = EdgeInsets.fromLTRB(
-                            gridPadding.w,
-                            8.h,
-                            gridPadding.w,
-                            12.h,
-                          );
+                        final padding = EdgeInsets.fromLTRB(
+                          gridPadX,
+                          8,
+                          gridPadX,
+                          12,
+                        );
 
-                          final gridHeight =
-                              tileHeight * 2 + crossSpacing + padding.vertical;
+                        final gridHeight = tileHeight * 2 + crossSpacing + padding.vertical;
 
-                          return SizedBox(
-                            height: gridHeight,
-                            child: GridView.builder(
-                              padding: padding,
-                              scrollDirection: Axis.horizontal,
-                              physics: const BouncingScrollPhysics(),
-                              primary: false,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 12.w,
-                                crossAxisSpacing: 12.w,
-                                childAspectRatio: 1.30,
-                              ),
-                              itemCount: list.length,
-                              itemBuilder: (context, i) {
-                                final app = list[i];
-                                return AppCard(
-                                  app: app,
-                                  compact: true,
-                                  onTap: () => Get.toNamed('${Routes.detail}/${app.id}'),
-                                );
-                              },
+                        return SizedBox(
+                          height: gridHeight,
+                          child: GridView.builder(
+                            padding: padding,
+                            scrollDirection: Axis.horizontal,
+                            physics: const BouncingScrollPhysics(),
+                            primary: false,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: gridSpacing,
+                              crossAxisSpacing: gridSpacing,
+                              childAspectRatio: 1.30,
                             ),
-                          );
-                        }
-
-                        return Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            gridPadding.w,
-                            8.h,
-                            gridPadding.w,
-                            16.h,
-                          ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final count = ResponsiveLayout.autoGridCount(
-                                context,
-                                width: constraints.maxWidth,
-                                minItemWidth: ResponsiveLayout.isExpanded(context) ? 220 : 200,
-                                min: 2,
-                                max: 4,
-                              );
-
-                              final aspect = ResponsiveLayout.productCardAspectRatio(count);
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                primary: false,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: list.length,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: count,
-                                  mainAxisSpacing: gridSpacing.w,
-                                  crossAxisSpacing: gridSpacing.w,
-                                  childAspectRatio: aspect,
-                                ),
-                                itemBuilder: (context, i) {
-                                  final app = list[i];
-                                  return AppCard(
-                                    app: app,
-                                    compact: false,
-                                    onTap: () => Get.toNamed('${Routes.detail}/${app.id}'),
-                                  );
-                                },
+                            itemCount: list.length,
+                            itemBuilder: (context, i) {
+                              final app = list[i];
+                              return AppCard(
+                                app: app,
+                                compact: true,
+                                onTap: () => Get.toNamed('${Routes.detail}/${app.id}'),
                               );
                             },
                           ),
                         );
-                      }),
-                    ],
-                  ),
+                      }
+
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          gridPadX,
+                          8,
+                          gridPadX,
+                          spacing.sectionGap,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final count = ResponsiveLayout.autoGridCount(
+                              context,
+                              width: constraints.maxWidth,
+                              minItemWidth: ResponsiveLayout.isExpanded(context) ? 220 : 200,
+                              min: 2,
+                              max: 4,
+                            );
+
+                            final aspect = ResponsiveLayout.productCardAspectRatio(count);
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              primary: false,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: list.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: count,
+                                mainAxisSpacing: gridSpacing,
+                                crossAxisSpacing: gridSpacing,
+                                childAspectRatio: aspect,
+                              ),
+                              itemBuilder: (context, i) {
+                                final app = list[i];
+                                return AppCard(
+                                  app: app,
+                                  compact: false,
+                                  onTap: () => Get.toNamed('${Routes.detail}/${app.id}'),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               );
             }),
