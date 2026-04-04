@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../domain/entities/product_entity.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/usecases/product/sync_product.dart';
@@ -91,6 +92,8 @@ class HomeController extends GetxController {
         break;
     }
   }
+
+  void goProductDetail(ProductEntity product) => Get.toNamed('${Routes.detail}/${product.id}');
 
   @override
   void onClose() {

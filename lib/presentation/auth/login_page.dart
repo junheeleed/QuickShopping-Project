@@ -47,102 +47,103 @@ class _LoginPageState extends State<LoginPage> {
         child: ResponsiveContent(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              return SingleChildScrollView(
+              return Padding(
                 padding: EdgeInsets.fromLTRB(
                   spacing.pagePaddingX,
                   spacing.itemGap,
                   spacing.pagePaddingX,
                   spacing.sectionGap,
                 ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxFormWidth),
-                    child: Container(
-                      padding: EdgeInsets.all(spacing.cardPadding),
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        borderRadius: BorderRadius.circular(radius.card),
-                        border: Border.all(color: colors.border),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '퀵쇼핑을 더 편리하게',
-                            style: context.text.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w900,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxFormWidth),
+                  child: Container(
+                    padding: EdgeInsets.all(spacing.cardPadding),
+                    color: colors.surface,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '퀵쇼핑을 더 편리하게',
+                                  style: context.text.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                SizedBox(height: spacing.itemGap),
+                                Text(
+                                  '로그인하고 주문/배송, 찜, 최근 본 상품을 확인하세요.',
+                                  style: context.text.bodyMedium?.copyWith(
+                                    color: colors.textSecondary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                SizedBox(height: spacing.sectionGap * 2),
+                                _ThemedField(
+                                  controller: _email,
+                                  hint: '이메일',
+                                  icon: Icons.mail_outline,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  errorText: _emailError,
+                                  onChanged: (_) => _clearEmailError(),
+                                ),
+                                SizedBox(height: spacing.sectionGap),
+                                _ThemedPasswordField(
+                                  controller: _pw,
+                                  hint: '비밀번호',
+                                  icon: Icons.lock_outline,
+                                  obscure: _obscure,
+                                  onToggle: () => setState(() => _obscure = !_obscure),
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (_) => _submit(),
+                                  errorText: _pwError,
+                                  helperText: '8자 이상 · 영문/숫자 포함',
+                                  onChanged: (_) => _clearPwError(),
+                                ),
+                                SizedBox(height: spacing.sectionGap * 1.5),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: context.fields.height,
+                                  child: ElevatedButton(
+                                    onPressed: _submit,
+                                    child: Text(
+                                      '로그인',
+                                      style: context.text.labelLarge?.copyWith(
+                                        color: colors.brandOn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                        ),
+                        SizedBox(height: spacing.sectionGap * 2),
+                        Center(
+                          child: GestureDetector(
+                            onTap: _goSignup,
+                            child: Text(
+                              '회원가입',
+                              style: context.text.labelLarge?.copyWith(
+                                color: colors.brand,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
-                          SizedBox(height: spacing.itemGap),
-                          Text(
-                            '로그인하고 주문/배송, 찜, 최근 본 상품을 확인하세요.',
-                            style: context.text.bodyMedium?.copyWith(
-                              color: colors.textSecondary,
+                        ),
+                        SizedBox(height: spacing.itemGap),
+                        Center(
+                          child: Text(
+                            '회원가입 후 로그인해 주세요.',
+                            style: context.text.bodySmall?.copyWith(
+                              color: colors.textTertiary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(height: spacing.sectionGap * 2),
-                          _ThemedField(
-                            controller: _email,
-                            hint: '이메일',
-                            icon: Icons.mail_outline,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            errorText: _emailError,
-                            onChanged: (_) => _clearEmailError(),
-                          ),
-                          SizedBox(height: spacing.sectionGap),
-                          _ThemedPasswordField(
-                            controller: _pw,
-                            hint: '비밀번호',
-                            icon: Icons.lock_outline,
-                            obscure: _obscure,
-                            onToggle: () => setState(() => _obscure = !_obscure),
-                            textInputAction: TextInputAction.done,
-                            onSubmitted: (_) => _submit(),
-                            errorText: _pwError,
-                            helperText: '8자 이상 · 영문/숫자 포함',
-                            onChanged: (_) => _clearPwError(),
-                          ),
-                          SizedBox(height: spacing.sectionGap * 1.5),
-                          SizedBox(
-                            width: double.infinity,
-                            height: context.fields.height,
-                            child: ElevatedButton(
-                              onPressed: _submit,
-                              child: Text(
-                                '로그인',
-                                style: context.text.labelLarge?.copyWith(
-                                  color: colors.brandOn,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: spacing.sectionGap * 2),
-                          Center(
-                            child: GestureDetector(
-                              onTap: _goSignup,
-                              child: Text(
-                                '회원가입',
-                                style: context.text.labelLarge?.copyWith(
-                                  color: colors.brand,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: spacing.itemGap),
-                          Center(
-                            child: Text(
-                              '회원가입 후 로그인해 주세요.',
-                              style: context.text.bodySmall?.copyWith(
-                                color: colors.textTertiary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

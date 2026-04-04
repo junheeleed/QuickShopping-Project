@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../domain/entities/home_banner_entity.dart';
 import '../../../domain/usecases/banner/get_banner_once.dart';
 import '../../../domain/usecases/banner/insert_banner_all.dart';
@@ -97,6 +98,8 @@ class HomeBannerController extends GetxController {
   void setCurrent(int i) => current.value = i;
   void togglePlay() => isPlaying.value = !isPlaying.value;
 
+  void goProductDetail(int id) => Get.toNamed('${Routes.detail}/$id');
+
   @override
   void onClose() {
     _sub?.cancel();
@@ -132,7 +135,10 @@ class HomeBannerCarousel extends StatelessWidget {
                 controller: controller.pageController,
                 itemCount: total,
                 onPageChanged: controller.setCurrent,
-                itemBuilder: (_, i) => _BannerCard(item: list[i]),
+                itemBuilder: (_, i) => _BannerCard(
+                  item: list[i],
+                  onTap: (id) => controller.goProductDetail(id),
+                ),
               ),
               Positioned(
                 right: spacing.cardPadding,
@@ -154,13 +160,16 @@ class HomeBannerCarousel extends StatelessWidget {
 
 class _BannerCard extends StatelessWidget {
   final HomeBannerItem item;
+  final Function(int id) onTap;
 
-  const _BannerCard({required this.item});
+  const _BannerCard({
+    required this.item,
+    required this.onTap
+  });
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
-    final radius = context.radius;
     final type = context.text;
     final metrics = context.metrics;
 
@@ -174,17 +183,18 @@ class _BannerCard extends StatelessWidget {
         final rightGap =
         hasImage ? (imageW + spacing.cardPadding) : spacing.cardPadding;
 
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: item.gradient,
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+        return GestureDetector(
+          onTap: () {
+            onTap(item.id);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: item.gradient,
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
             ),
-            borderRadius: BorderRadius.circular(radius.card),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(radius.card),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -195,18 +205,14 @@ class _BannerCard extends StatelessWidget {
                     bottom: spacing.itemGap,
                     child: SizedBox(
                       width: imageW,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(radius.image),
-                        child: Container(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          padding: EdgeInsets.all(spacing.itemGap),
-                          child: Image.network(
-                            item.imageUrl!,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.centerRight,
-                            errorBuilder: (_, __, ___) =>
-                            const SizedBox.shrink(),
-                          ),
+                      child: Container(
+                        padding: EdgeInsets.all(spacing.itemGap),
+                        child: Image.network(
+                          item.imageUrl!,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.centerRight,
+                          errorBuilder: (_, __, ___) =>
+                          const SizedBox.shrink(),
                         ),
                       ),
                     ),
@@ -243,22 +249,7 @@ class _BannerCard extends StatelessWidget {
                           fontSize: metrics.bannerSubtitle,
                         ),
                       ),
-                      const Spacer(),
                     ],
-                  ),
-                ),
-                IgnorePointer(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black.withValues(alpha: 0.06),
-                          Colors.black.withValues(alpha: 0.02),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                    ),
                   ),
                 ),
               ],

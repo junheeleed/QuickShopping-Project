@@ -81,11 +81,9 @@ class ResponsiveContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxWidth = ResponsiveLayout.contentMaxWidth(context);
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: child,
-      ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: child,
     );
   }
 }

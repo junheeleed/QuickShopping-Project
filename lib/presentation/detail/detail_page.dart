@@ -371,58 +371,60 @@ class _ProductBottomBar extends StatelessWidget {
 
     return SafeArea(
       top: false,
-      child: Container(
-        decoration: BoxDecoration(
-          color: colors.surface,
-          border: Border(top: BorderSide(color: colors.divider)),
-        ),
-        child: ResponsiveContent(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              spacing.pagePaddingX,
-              spacing.itemGap,
-              spacing.pagePaddingX,
-              spacing.itemGap,
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: onFavorite,
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(
-                    detail.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: detail.isFavorite ? Colors.red : colors.textPrimary,
-                  ),
-                ),
-                SizedBox(width: spacing.itemGap),
-                Expanded(
-                  child: SizedBox(
-                    height: context.fields.height,
-                    child: OutlinedButton(
-                      onPressed: detail.url.isEmpty ? null : onCopy,
-                      child: Text(
-                        '링크 복사',
-                        style: context.text.labelLarge,
-                      ),
+      child: IntrinsicHeight(
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            border: Border(top: BorderSide(color: colors.divider)),
+          ),
+          child: ResponsiveContent(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                spacing.pagePaddingX,
+                spacing.itemGap,
+                spacing.pagePaddingX,
+                spacing.itemGap,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: onFavorite,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      detail.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: detail.isFavorite ? Colors.red : colors.textPrimary,
                     ),
                   ),
-                ),
-                SizedBox(width: spacing.itemGap),
-                Expanded(
-                  child: SizedBox(
-                    height: context.fields.height,
-                    child: ElevatedButton(
-                      onPressed: detail.url.isEmpty ? null : onOpen,
-                      child: Text(
-                        '스토어 열기',
-                        style: context.text.labelLarge?.copyWith(
-                          color: colors.brandOn,
+                  SizedBox(width: spacing.itemGap),
+                  Expanded(
+                    child: SizedBox(
+                      height: context.fields.height,
+                      child: OutlinedButton(
+                        onPressed: detail.url.isEmpty ? null : onCopy,
+                        child: Text(
+                          '링크 복사',
+                          style: context.text.labelLarge,
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(width: spacing.itemGap),
+                  Expanded(
+                    child: SizedBox(
+                      height: context.fields.height,
+                      child: ElevatedButton(
+                        onPressed: detail.url.isEmpty ? null : onOpen,
+                        child: Text(
+                          '스토어 열기',
+                          style: context.text.labelLarge?.copyWith(
+                            color: colors.brandOn,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

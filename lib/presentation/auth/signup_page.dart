@@ -70,11 +70,7 @@ class _SignupPageState extends State<SignupPage> {
                     constraints: BoxConstraints(maxWidth: maxFormWidth),
                     child: Container(
                       padding: EdgeInsets.all(spacing.cardPadding),
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        borderRadius: BorderRadius.circular(radius.card),
-                        border: Border.all(color: colors.border),
-                      ),
+                      color: colors.surface,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -27,7 +27,7 @@ class BannerRepositoryImpl implements BannerRepository {
   List<HomeBannersCompanion> _seedBanners() {
     return [
       HomeBannersCompanion.insert(
-        id: drift.Value(1),
+        id: drift.Value(11525829619),
         title: '제일 중요한 건 건강\n자기 관리 템 준비',
         subtitle: '최대 10% 할인',
         targetUrl: 'https://brand.naver.com/hleshop/products/11525829619',
@@ -37,7 +37,7 @@ class BannerRepositoryImpl implements BannerRepository {
         sortOrder: 1,
       ),
       HomeBannersCompanion.insert(
-        id: drift.Value(2),
+        id: drift.Value(6576886971),
         title: '매일 11시, 오늘꿀딜',
         subtitle: '무료배송에 최대 혜택까지!',
         targetUrl: 'https://brand.naver.com/jyns/products/6576886971?nl-au=63887eaef2b44bed88970aa4a4268b3c', // ✅ 너가 준 URL
@@ -47,7 +47,7 @@ class BannerRepositoryImpl implements BannerRepository {
         sortOrder: 2,
       ),
       HomeBannersCompanion.insert(
-        id: drift.Value(3),
+        id: drift.Value(7868256026),
         title: '관심 있을\n행사 상품 추천!',
         subtitle: '최대 혜택 놓치지 마세요',
         targetUrl: 'https://brand.naver.com/meditree/products/7868256026',
