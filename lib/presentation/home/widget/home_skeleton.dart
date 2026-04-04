@@ -14,11 +14,10 @@ class HomeSkeleton extends StatelessWidget {
     final colors = context.colors;
     final spacing = context.spacing;
     final radius = context.radius;
+    final metrics = context.metrics;
 
-    // 라이트/다크에서 스켈레톤 톤이 달라야 자연스러움
     final base = colors.border.withValues(alpha: 0.9);
     final highlight = colors.surfaceAlt.withValues(alpha: 0.9);
-
     final gridPadX = spacing.pagePaddingX;
 
     return Shimmer.fromColors(
@@ -32,29 +31,42 @@ class HomeSkeleton extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: gridPadX),
               child: _box(
-                height: ResponsiveLayout.isCompact(context) ? 200 : 220,
+                height: metrics.bannerHeight,
                 radius: radius.card,
                 color: colors.surface,
               ),
             ),
             SizedBox(height: spacing.sectionGap),
           ],
-
           Padding(
-            padding: EdgeInsets.fromLTRB(gridPadX, 0, gridPadX, spacing.itemGap),
+            padding: EdgeInsets.fromLTRB(
+              gridPadX,
+              0,
+              gridPadX,
+              spacing.itemGap,
+            ),
             child: Row(
               children: [
-                _box(width: 140, height: 18, radius: 6, color: colors.surface),
+                _box(
+                  width: ResponsiveLayout.isCompact(context) ? 140 : 180,
+                  height: 18,
+                  radius: 6,
+                  color: colors.surface,
+                ),
                 const Spacer(),
-                _box(width: 40, height: 14, radius: 6, color: colors.surface),
+                _box(
+                  width: ResponsiveLayout.isCompact(context) ? 40 : 52,
+                  height: 14,
+                  radius: 6,
+                  color: colors.surface,
+                ),
               ],
             ),
           ),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: gridPadX),
             child: SizedBox(
-              height: _gridHeight(),
+              height: _gridHeight(context),
               child: GridView.builder(
                 padding: EdgeInsets.only(bottom: spacing.sectionGap),
                 scrollDirection: Axis.horizontal,
@@ -75,19 +87,21 @@ class HomeSkeleton extends StatelessWidget {
     );
   }
 
-  static double _gridHeight() {
-    const tileHeight = 150.0;
-    const crossSpacing = 12.0;
-    const paddingVertical = 8.0 + 12.0;
-    return tileHeight * 2 + crossSpacing + paddingVertical;
+  double _gridHeight(BuildContext context) {
+    final spacing = context.spacing;
+    final metrics = context.metrics;
+
+    return metrics.homeCompactGridTileHeight * 2 +
+        spacing.gridSpacing +
+        spacing.itemGap +
+        spacing.sectionGap;
   }
 
   Widget _skeletonCard(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
     final radius = context.radius;
-
-    final img = ResponsiveLayout.isCompact(context) ? 63.0 : 72.0;
+    final metrics = context.metrics;
 
     return _box(
       radius: radius.card,
@@ -97,17 +111,35 @@ class HomeSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _box(width: img, height: img, radius: radius.image, color: colors.surface),
+            _box(
+              width: metrics.homeSkeletonImageSize,
+              height: metrics.homeSkeletonImageSize,
+              radius: radius.image,
+              color: colors.surface,
+            ),
             SizedBox(height: spacing.itemGap + 4),
-            _box(width: double.infinity, height: 16, radius: 6, color: colors.surface),
+            _box(
+              width: double.infinity,
+              height: 16,
+              radius: 6,
+              color: colors.surface,
+            ),
             SizedBox(height: spacing.itemGap),
-            _box(width: 90, height: 14, radius: 6, color: colors.surface),
-
+            _box(
+              width: 90,
+              height: 14,
+              radius: 6,
+              color: colors.surface,
+            ),
             Expanded(child: SizedBox(height: spacing.itemGap)),
-
             Align(
               alignment: Alignment.bottomLeft,
-              child: _box(width: 60, height: 12, radius: 6, color: colors.surface),
+              child: _box(
+                width: 60,
+                height: 12,
+                radius: 6,
+                color: colors.surface,
+              ),
             ),
           ],
         ),

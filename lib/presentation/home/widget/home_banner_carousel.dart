@@ -41,7 +41,6 @@ class HomeBannerController extends GetxController {
   final pageController = PageController();
   final current = 0.obs;
   final isPlaying = true.obs;
-
   final banners = <HomeBannerItem>[].obs;
 
   StreamSubscription? _sub;
@@ -116,19 +115,17 @@ class HomeBannerCarousel extends StatelessWidget {
 
     return Obx(() {
       final spacing = context.spacing;
+      final metrics = context.metrics;
       final list = controller.banners;
       final idx = controller.current.value;
       final total = list.length;
 
       if (list.isEmpty) return const SizedBox.shrink();
 
-      final double height = ResponsiveLayout.isCompact(context)
-          ? 190 : (ResponsiveLayout.isMedium(context) ? 210 : 230);
-
       return Padding(
         padding: EdgeInsets.only(bottom: spacing.sectionGap),
         child: SizedBox(
-          height: height,
+          height: metrics.bannerHeight,
           child: Stack(
             children: [
               PageView.builder(
@@ -157,6 +154,7 @@ class HomeBannerCarousel extends StatelessWidget {
 
 class _BannerCard extends StatelessWidget {
   final HomeBannerItem item;
+
   const _BannerCard({required this.item});
 
   @override
@@ -164,13 +162,17 @@ class _BannerCard extends StatelessWidget {
     final spacing = context.spacing;
     final radius = context.radius;
     final type = context.text;
+    final metrics = context.metrics;
+
     final hasImage = item.imageUrl != null && item.imageUrl!.isNotEmpty;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final bannerW = constraints.maxWidth;
-        final imageW = hasImage ? (bannerW * 0.36) : 0.0;
-        final rightGap = hasImage ? (imageW + spacing.cardPadding) : spacing.cardPadding;
+        final imageFraction = ResponsiveLayout.isExpanded(context) ? 0.34 : 0.36;
+        final imageW = hasImage ? bannerW * imageFraction : 0.0;
+        final rightGap =
+        hasImage ? (imageW + spacing.cardPadding) : spacing.cardPadding;
 
         return Container(
           decoration: BoxDecoration(
@@ -202,13 +204,13 @@ class _BannerCard extends StatelessWidget {
                             item.imageUrl!,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerRight,
-                            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                            errorBuilder: (_, __, ___) =>
+                            const SizedBox.shrink(),
                           ),
                         ),
                       ),
                     ),
                   ),
-
                 Padding(
                   padding: EdgeInsets.fromLTRB(
                     spacing.cardPadding,
@@ -221,16 +223,16 @@ class _BannerCard extends StatelessWidget {
                     children: [
                       Text(
                         item.title,
-                        maxLines: 2,
+                        maxLines: ResponsiveLayout.isCompact(context) ? 2 : 3,
                         overflow: TextOverflow.ellipsis,
                         style: type.titleLarge?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w900,
-                          fontSize: ResponsiveLayout.isCompact(context) ? 24 : 26,
+                          fontSize: metrics.bannerTitle,
                           height: 1.12,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: spacing.itemGap / 2),
                       Text(
                         item.subtitle,
                         maxLines: 1,
@@ -238,14 +240,13 @@ class _BannerCard extends StatelessWidget {
                         style: type.bodyMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: ResponsiveLayout.isCompact(context) ? 15 : 16,
+                          fontSize: metrics.bannerSubtitle,
                         ),
                       ),
                       const Spacer(),
                     ],
                   ),
                 ),
-
                 IgnorePointer(
                   child: Container(
                     decoration: BoxDecoration(
@@ -287,6 +288,7 @@ class _PagePill extends StatelessWidget {
     final spacing = context.spacing;
     final radius = context.radius;
     final type = context.text;
+    final metrics = context.metrics;
 
     return Material(
       color: Colors.black.withValues(alpha: 0.35),
@@ -296,15 +298,15 @@ class _PagePill extends StatelessWidget {
         onTap: onToggle,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: spacing.itemGap + 2,
-            vertical: 6,
+            horizontal: metrics.badgeHorizontalPadding,
+            vertical: metrics.badgeVerticalPadding,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 isPlaying ? Icons.pause : Icons.play_arrow,
-                size: 18,
+                size: metrics.smallIcon,
                 color: Colors.white,
               ),
               SizedBox(width: spacing.itemGap),

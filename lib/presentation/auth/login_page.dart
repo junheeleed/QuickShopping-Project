@@ -29,6 +29,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
+    final radius = context.radius;
+
+    final maxFormWidth =
+    ResponsiveLayout.isCompact(context) ? double.infinity : 460.0;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -41,96 +45,109 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: SafeArea(
         child: ResponsiveContent(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              spacing.pagePaddingX,
-              spacing.itemGap,
-              spacing.pagePaddingX,
-              spacing.sectionGap,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: spacing.itemGap),
-                Text('퀵쇼핑을 더 편리하게',
-                    style: context.text.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
-                    )),
-                const SizedBox(height: 6),
-                Text(
-                  '로그인하고 주문/배송, 찜, 최근 본 상품을 확인하세요.',
-                  style: context.text.bodyMedium?.copyWith(
-                    color: colors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  spacing.pagePaddingX,
+                  spacing.itemGap,
+                  spacing.pagePaddingX,
+                  spacing.sectionGap,
                 ),
-                SizedBox(height: spacing.sectionGap * 2),
-
-                _ThemedField(
-                  controller: _email,
-                  hint: '이메일',
-                  icon: Icons.mail_outline,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  errorText: _emailError,
-                  onChanged: (_) => _clearEmailError(),
-                ),
-                SizedBox(height: spacing.sectionGap),
-
-                _ThemedPasswordField(
-                  controller: _pw,
-                  hint: '비밀번호',
-                  icon: Icons.lock_outline,
-                  obscure: _obscure,
-                  onToggle: () => setState(() => _obscure = !_obscure),
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _submit(),
-                  errorText: _pwError,
-                  helperText: '8자 이상 · 영문/숫자 포함',
-                  onChanged: (_) => _clearPwError(),
-                ),
-
-                SizedBox(height: spacing.sectionGap * 1.5),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: context.fields.height,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    child: Text(
-                        '로그인',
-                        style: context.text.labelLarge?.copyWith(
-                            color: colors.brandOn
-                        )
-                    ),
-                  ),
-                ),
-
-                const Spacer(),
-                Center(
-                  child: GestureDetector(
-                    onTap: _goSignup,
-                    child: Text(
-                      '회원가입',
-                      style: context.text.labelLarge?.copyWith(
-                        color: colors.brand,
-                        fontWeight: FontWeight.w900,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxFormWidth),
+                    child: Container(
+                      padding: EdgeInsets.all(spacing.cardPadding),
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(radius.card),
+                        border: Border.all(color: colors.border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '퀵쇼핑을 더 편리하게',
+                            style: context.text.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          SizedBox(height: spacing.itemGap),
+                          Text(
+                            '로그인하고 주문/배송, 찜, 최근 본 상품을 확인하세요.',
+                            style: context.text.bodyMedium?.copyWith(
+                              color: colors.textSecondary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: spacing.sectionGap * 2),
+                          _ThemedField(
+                            controller: _email,
+                            hint: '이메일',
+                            icon: Icons.mail_outline,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            errorText: _emailError,
+                            onChanged: (_) => _clearEmailError(),
+                          ),
+                          SizedBox(height: spacing.sectionGap),
+                          _ThemedPasswordField(
+                            controller: _pw,
+                            hint: '비밀번호',
+                            icon: Icons.lock_outline,
+                            obscure: _obscure,
+                            onToggle: () => setState(() => _obscure = !_obscure),
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) => _submit(),
+                            errorText: _pwError,
+                            helperText: '8자 이상 · 영문/숫자 포함',
+                            onChanged: (_) => _clearPwError(),
+                          ),
+                          SizedBox(height: spacing.sectionGap * 1.5),
+                          SizedBox(
+                            width: double.infinity,
+                            height: context.fields.height,
+                            child: ElevatedButton(
+                              onPressed: _submit,
+                              child: Text(
+                                '로그인',
+                                style: context.text.labelLarge?.copyWith(
+                                  color: colors.brandOn,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: spacing.sectionGap * 2),
+                          Center(
+                            child: GestureDetector(
+                              onTap: _goSignup,
+                              child: Text(
+                                '회원가입',
+                                style: context.text.labelLarge?.copyWith(
+                                  color: colors.brand,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: spacing.itemGap),
+                          Center(
+                            child: Text(
+                              '회원가입 후 로그인해 주세요.',
+                              style: context.text.bodySmall?.copyWith(
+                                color: colors.textTertiary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
-                Center(
-                  child: Text(
-                    '회원가입 후 로그인해 주세요.',
-                    style: context.text.bodySmall?.copyWith(
-                      color: colors.textTertiary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -181,8 +198,11 @@ class _LoginPageState extends State<LoginPage> {
           : '비밀번호가 틀렸습니다';
       Get.snackbar('로그인 실패', msg, snackPosition: SnackPosition.BOTTOM);
     } catch (_) {
-      Get.snackbar('로그인 실패', '잠시 후 다시 시도해 주세요.',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        '로그인 실패',
+        '잠시 후 다시 시도해 주세요.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -195,8 +215,11 @@ class _LoginPageState extends State<LoginPage> {
         _emailError = null;
         _pwError = null;
       });
-      Get.snackbar('회원가입 완료', '로그인을 진행해 주세요.',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        '회원가입 완료',
+        '로그인을 진행해 주세요.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -232,6 +255,7 @@ class _ThemedField extends StatelessWidget {
     final colors = context.colors;
     final fields = context.fields;
     final spacing = context.spacing;
+    final metrics = context.metrics;
 
     final showError = errorText != null && errorText!.isNotEmpty;
 
@@ -251,7 +275,7 @@ class _ThemedField extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(icon, size: 18, color: colors.textSecondary),
+              Icon(icon, size: metrics.smallIcon, color: colors.textSecondary),
               SizedBox(width: spacing.itemGap),
               Expanded(
                 child: TextField(
@@ -262,8 +286,9 @@ class _ThemedField extends StatelessWidget {
                   style: context.text.bodyMedium,
                   decoration: InputDecoration(
                     hintText: hint,
+                    border: InputBorder.none,
                     hintStyle: context.text.bodyMedium?.copyWith(
-                        color: colors.textTertiary
+                      color: colors.textTertiary,
                     ),
                   ),
                 ),
@@ -316,6 +341,7 @@ class _ThemedPasswordField extends StatelessWidget {
     final colors = context.colors;
     final fields = context.fields;
     final spacing = context.spacing;
+    final metrics = context.metrics;
 
     final showError = errorText != null && errorText!.isNotEmpty;
 
@@ -335,7 +361,7 @@ class _ThemedPasswordField extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(icon, size: 18, color: colors.textSecondary),
+              Icon(icon, size: metrics.smallIcon, color: colors.textSecondary),
               SizedBox(width: spacing.itemGap),
               Expanded(
                 child: TextField(
@@ -347,8 +373,9 @@ class _ThemedPasswordField extends StatelessWidget {
                   style: context.text.bodyMedium,
                   decoration: InputDecoration(
                     hintText: hint,
+                    border: InputBorder.none,
                     hintStyle: context.text.bodyMedium?.copyWith(
-                        color: colors.textTertiary
+                      color: colors.textTertiary,
                     ),
                   ),
                 ),

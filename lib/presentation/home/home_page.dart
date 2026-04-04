@@ -2,41 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quick_shopping/presentation/home/widget/home_banner_carousel.dart';
 import 'package:quick_shopping/presentation/home/widget/home_skeleton.dart';
+
 import '../../app/routes/app_routes.dart';
 import '../responsive/responsive.dart';
 import '../theme/theme_x.dart';
 import '../widgets/app_card.dart';
 import 'home_controller.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-// TODO 카테고리 관련 로직은 제거하기
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  late final HomeController controller = Get.find<HomeController>();
-  late final TabController _tab;
 
   static const Color _tabPurple = Color(0xFF7B61FF);
 
   @override
-  void initState() {
-    super.initState();
-    _tab = TabController(length: 2, vsync: this);
-
-    _tab.addListener(() {
-      if (_tab.indexIsChanging) return;
-      controller.onTopTabChanged(_tab.index);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.find<HomeController>();
     final colors = context.colors;
     final spacing = context.spacing;
+    final metrics = context.metrics;
 
     final padX = spacing.pagePaddingX;
     final gridPadX = spacing.pagePaddingX;
@@ -54,39 +37,48 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             scrolledUnderElevation: 0,
             titleSpacing: padX,
             toolbarHeight: ResponsiveLayout.appBarHeight(context),
-            title: Row(
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: ResponsiveLayout.isCompact(context) ? 22 : 24,
-                      fontWeight: FontWeight.w900,
-                      height: 1.0,
-                      color: colors.textPrimary,
-                    ),
-                    children: const [
-                      TextSpan(text: '퀵', style: TextStyle(color: Color(0xFF2DB400))),
-                      TextSpan(text: '쇼핑', style: TextStyle(color: _tabPurple)),
-                    ],
-                  ),
+            title: RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: metrics.homeBrandTitle,
+                  fontWeight: FontWeight.w900,
+                  height: 1.0,
+                  color: colors.textPrimary,
                 ),
-              ],
+                children: const [
+                  TextSpan(
+                    text: '퀵',
+                    style: TextStyle(color: Color(0xFF2DB400)),
+                  ),
+                  TextSpan(
+                    text: '쇼핑',
+                    style: TextStyle(color: _tabPurple),
+                  ),
+                ],
+              ),
             ),
             actions: [
               IconButton(
                 onPressed: () {},
                 visualDensity: VisualDensity.compact,
-                icon: Icon(Icons.notifications_none, color: colors.textPrimary),
+                icon: Icon(
+                  Icons.notifications_none,
+                  color: colors.textPrimary,
+                  size: metrics.mediumIcon,
+                ),
               ),
               IconButton(
                 onPressed: () {},
                 visualDensity: VisualDensity.compact,
-                icon: Icon(Icons.shopping_bag_outlined, color: colors.textPrimary),
+                icon: Icon(
+                  Icons.shopping_bag_outlined,
+                  color: colors.textPrimary,
+                  size: metrics.mediumIcon,
+                ),
               ),
               SizedBox(width: spacing.itemGap),
             ],
           ),
-
           SliverToBoxAdapter(
             child: Obx(() {
               if (controller.isLoading.value) {
@@ -101,7 +93,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   children: [
                     const HomeBannerCarousel(),
                     SizedBox(height: spacing.sectionGap),
-
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: padX),
                       child: Text(
@@ -114,7 +105,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       ),
                     ),
                     SizedBox(height: spacing.itemGap),
-
                     Obx(() {
                       if (controller.isLoading.value) {
                         return const HomeSkeleton(onlyGrid: true);
@@ -122,19 +112,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
                       final list = controller.products;
 
-                      // 폰: 기존 UX 유지(가로 스크롤 + 2행)
                       if (ResponsiveLayout.isCompact(context)) {
-                        const double tileHeight = 170;
-                        const double crossSpacing = 12;
+                        final tileHeight = metrics.homeCompactGridTileHeight;
 
                         final padding = EdgeInsets.fromLTRB(
                           gridPadX,
-                          8,
+                          spacing.itemGap,
                           gridPadX,
-                          12,
+                          spacing.sectionGap,
                         );
 
-                        final gridHeight = tileHeight * 2 + crossSpacing + padding.vertical;
+                        final gridHeight = tileHeight * 2 +
+                            gridSpacing +
+                            padding.vertical;
 
                         return SizedBox(
                           height: gridHeight,
@@ -143,7 +133,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             scrollDirection: Axis.horizontal,
                             physics: const BouncingScrollPhysics(),
                             primary: false,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               mainAxisSpacing: gridSpacing,
                               crossAxisSpacing: gridSpacing,
@@ -155,7 +146,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               return AppCard(
                                 app: app,
                                 compact: true,
-                                onTap: () => Get.toNamed('${Routes.detail}/${app.id}'),
+                                onTap: () =>
+                                    Get.toNamed('${Routes.detail}/${app.id}'),
                               );
                             },
                           ),
@@ -165,7 +157,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       return Padding(
                         padding: EdgeInsets.fromLTRB(
                           gridPadX,
-                          8,
+                          spacing.itemGap,
                           gridPadX,
                           spacing.sectionGap,
                         ),
@@ -174,7 +166,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             final count = ResponsiveLayout.autoGridCount(
                               context,
                               width: constraints.maxWidth,
-                              minItemWidth: ResponsiveLayout.isExpanded(context) ? 220 : 200,
+                              minItemWidth:
+                              ResponsiveLayout.isExpanded(context)
+                                  ? 220
+                                  : 200,
                               min: 2,
                               max: 4,
                             );
@@ -212,11 +207,5 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _tab.dispose();
-    super.dispose();
   }
 }

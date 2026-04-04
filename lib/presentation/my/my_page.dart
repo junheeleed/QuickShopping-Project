@@ -12,10 +12,8 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<MyController>();
-
     final colors = context.colors;
     final spacing = context.spacing;
-
     final padX = spacing.pagePaddingX;
 
     return Scaffold(
@@ -29,6 +27,7 @@ class MyPage extends StatelessWidget {
               SliverAppBar(
                 pinned: true,
                 elevation: 0,
+                scrolledUnderElevation: 0,
                 backgroundColor: colors.background,
                 surfaceTintColor: colors.background,
                 titleSpacing: padX,
@@ -36,11 +35,10 @@ class MyPage extends StatelessWidget {
                 title: Text(
                   '마이',
                   style: context.text.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
-
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
@@ -49,27 +47,46 @@ class MyPage extends StatelessWidget {
                     padX,
                     spacing.sectionGap,
                   ),
-                  child: profile.isLoggedIn
-                      ? _ProfileCard(
-                    nickname: profile.nickname ?? '사용자',
-                    email: profile.email ?? '',
-                    onLogout: controller.logoutUser,
-                  )
-                      : _GuestCard(onLogin: () => Get.toNamed(Routes.login)),
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    padX,
-                    0,
-                    padX,
-                    spacing.sectionGap,
-                  ),
-                  child: _MenuCard(
-                    isLoggedIn: profile.isLoggedIn,
-                    onRequireLogin: () => Get.toNamed(Routes.login),
+                  child: ResponsiveLayout.isCompact(context)
+                      ? Column(
+                    children: [
+                      profile.isLoggedIn
+                          ? _ProfileCard(
+                        nickname: profile.nickname ?? '사용자',
+                        email: profile.email ?? '',
+                        onLogout: controller.logoutUser,
+                      ) : _GuestCard(
+                        onLogin: () => Get.toNamed(Routes.login),
+                      ),
+                      SizedBox(height: spacing.sectionGap),
+                      _MenuCard(
+                        isLoggedIn: profile.isLoggedIn,
+                        onRequireLogin: () => Get.toNamed(Routes.login),
+                      ),
+                    ],
+                  ) : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: profile.isLoggedIn
+                            ? _ProfileCard(
+                          nickname: profile.nickname ?? '사용자',
+                          email: profile.email ?? '',
+                          onLogout: controller.logoutUser,
+                        ) : _GuestCard(
+                          onLogin: () => Get.toNamed(Routes.login),
+                        ),
+                      ),
+                      SizedBox(width: spacing.sectionGap),
+                      Expanded(
+                        flex: 6,
+                        child: _MenuCard(
+                          isLoggedIn: profile.isLoggedIn,
+                          onRequireLogin: () => Get.toNamed(Routes.login),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -83,6 +100,7 @@ class MyPage extends StatelessWidget {
 
 class _GuestCard extends StatelessWidget {
   final VoidCallback onLogin;
+
   const _GuestCard({required this.onLogin});
 
   @override
@@ -117,7 +135,6 @@ class _GuestCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: spacing.sectionGap),
-
           SizedBox(
             width: double.infinity,
             height: context.fields.height,
@@ -125,7 +142,9 @@ class _GuestCard extends StatelessWidget {
               onPressed: onLogin,
               child: Text(
                 '로그인',
-                style: context.text.labelLarge?.copyWith(color: colors.brandOn),
+                style: context.text.labelLarge?.copyWith(
+                  color: colors.brandOn,
+                ),
               ),
             ),
           ),
@@ -151,8 +170,9 @@ class _ProfileCard extends StatelessWidget {
     final colors = context.colors;
     final spacing = context.spacing;
     final radius = context.radius;
+    final metrics = context.metrics;
 
-    final avatarSize = ResponsiveLayout.isCompact(context) ? 54.0 : 60.0;
+    final avatarSize = metrics.avatarSize;
 
     return Container(
       padding: EdgeInsets.all(spacing.cardPadding),
@@ -170,7 +190,11 @@ class _ProfileCard extends StatelessWidget {
               color: colors.brand.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(radius.image),
             ),
-            child: Icon(Icons.person, color: colors.brand),
+            child: Icon(
+              Icons.person,
+              color: colors.brand,
+              size: metrics.mediumIcon,
+            ),
           ),
           SizedBox(width: spacing.cardPadding),
           Expanded(
@@ -202,7 +226,7 @@ class _ProfileCard extends StatelessWidget {
             child: Text(
               '로그아웃',
               style: context.text.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w900
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),
@@ -294,11 +318,16 @@ class _MenuTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final spacing = context.spacing;
+    final metrics = context.metrics;
 
     return ListTile(
       dense: true,
       contentPadding: EdgeInsets.symmetric(horizontal: spacing.cardPadding),
-      leading: Icon(icon, size: 22, color: colors.textPrimary),
+      leading: Icon(
+        icon,
+        size: metrics.mediumIcon,
+        color: colors.textPrimary,
+      ),
       title: Text(
         title,
         style: context.text.bodyMedium?.copyWith(
@@ -309,7 +338,7 @@ class _MenuTile extends StatelessWidget {
       trailing: Icon(
         locked ? Icons.lock_outline : Icons.chevron_right,
         color: colors.textTertiary,
-        size: 22,
+        size: metrics.mediumIcon,
       ),
       onTap: onTap,
     );

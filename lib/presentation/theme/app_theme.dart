@@ -3,6 +3,7 @@
 import '../responsive/responsive.dart';
 import 'app_text_theme.dart';
 import 'color_theme.dart';
+import 'component_metrics_theme.dart';
 import 'radius_theme.dart';
 import 'spacing_theme.dart';
 import 'text_field_theme.dart';
@@ -14,6 +15,7 @@ class AppTheme {
     final spacing = SpacingTheme.fromSize(size);
     final fields = TextFieldTheme.fromSize(size, radius);
     final textTheme = AppTextTheme.fromSize(size, colors);
+    final metrics = ComponentMetricsTheme.fromSize(size);
 
     final scheme = colors.toColorScheme(brightness);
 
@@ -142,6 +144,7 @@ class AppTheme {
         spacing,
         radius,
         fields,
+        metrics,
       ],
     );
   }

@@ -24,7 +24,7 @@ class QuickShoppingApp extends StatelessWidget {
       initialRoute: Routes.root,
 
       builder: (context, child) {
-        final size = ResponsiveLayout.size(context);
+        final size = ResponsiveLayout.screenSizeOf(context);
         final brightness = MediaQuery.platformBrightnessOf(context);
         final theme = AppTheme.forSize(size, brightness);
         return Theme(data: theme, child: child ?? const SizedBox.shrink());
