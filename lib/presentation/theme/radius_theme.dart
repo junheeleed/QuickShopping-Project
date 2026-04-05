@@ -15,15 +15,18 @@ class RadiusTheme extends ThemeExtension<RadiusTheme> {
     required this.image,
   });
 
-  static RadiusTheme fromSize(ScreenSize size) {
-    final scale = AppThemeScale.radius[size]!;
-
+  factory RadiusTheme.fromSize(ScreenSize size) {
+    final scale = AppThemeScale.radiusOf(size);
     return RadiusTheme(
       button: scale.button,
       card: scale.card,
       image: scale.image,
     );
   }
+
+  BorderRadius get buttonRadius => BorderRadius.circular(button);
+  BorderRadius get cardRadius => BorderRadius.circular(card);
+  BorderRadius get imageRadius => BorderRadius.circular(image);
 
   @override
   RadiusTheme copyWith({

@@ -21,9 +21,8 @@ class SpacingTheme extends ThemeExtension<SpacingTheme> {
     required this.bottomBarPaddingX,
   });
 
-  static SpacingTheme fromSize(ScreenSize size) {
-    final scale = AppThemeScale.spacing[size]!;
-
+  factory SpacingTheme.fromSize(ScreenSize size) {
+    final scale = AppThemeScale.spacingOf(size);
     return SpacingTheme(
       pagePaddingX: scale.pagePaddingX,
       sectionGap: scale.sectionGap,

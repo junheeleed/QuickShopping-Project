@@ -19,7 +19,7 @@ class TextFieldTheme extends ThemeExtension<TextFieldTheme> {
   });
 
   static TextFieldTheme fromSize(ScreenSize size, RadiusTheme radiusTheme) {
-    final scale = AppThemeScale.field[size]!;
+    final scale = AppThemeScale.fieldOf(size);
 
     return TextFieldTheme(
       height: scale.height,

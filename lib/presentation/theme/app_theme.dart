@@ -1,4 +1,5 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:quick_shopping/presentation/theme/text_field_theme.dart';
 
 import '../responsive/responsive.dart';
 import 'app_text_theme.dart';
@@ -6,15 +7,14 @@ import 'color_theme.dart';
 import 'component_metrics_theme.dart';
 import 'radius_theme.dart';
 import 'spacing_theme.dart';
-import 'text_field_theme.dart';
 
 class AppTheme {
   static ThemeData forSize(ScreenSize size, Brightness brightness) {
     final colors = ColorTheme.fromBrightness(brightness);
     final radius = RadiusTheme.fromSize(size);
     final spacing = SpacingTheme.fromSize(size);
-    final fields = TextFieldTheme.fromSize(size, radius);
-    final textTheme = AppTextTheme.fromSize(size, colors);
+    final field = TextFieldTheme.fromSize(size, radius);
+    final textTheme = AppTextTheme.fromSize(size, colors, brightness);
     final metrics = ComponentMetricsTheme.fromSize(size);
 
     final scheme = colors.toColorScheme(brightness);
@@ -33,10 +33,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         iconTheme: IconThemeData(color: colors.textPrimary), // TODO Icon 색상 따로 필드 만들기
-        titleTextStyle: textTheme.titleLarge?.copyWith(
-          color: colors.textPrimary,
-          fontWeight: FontWeight.w900,
-        ),
+        titleTextStyle: textTheme.titleLarge,
       ),
 
       cardTheme: CardThemeData(
@@ -45,46 +42,44 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius.card),
+          borderRadius: radius.cardRadius,
           side: BorderSide(color: colors.border),
-        ),
-      ),
-
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: colors.surface,
-        surfaceTintColor: Colors.transparent,
-        modalBackgroundColor: colors.surface,
-        modalBarrierColor: Colors.black54,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(radius.card),
-          ),
-        ),
-      ),
-
-      dialogTheme: DialogThemeData(
-        backgroundColor: colors.surface,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius.card),
-          side: BorderSide(color: colors.border),
-        ),
-        titleTextStyle: textTheme.titleMedium?.copyWith(
-          color: colors.textPrimary,
-          fontWeight: FontWeight.w900,
-        ),
-        contentTextStyle: textTheme.bodyMedium?.copyWith(
-          color: colors.textSecondary,
         ),
       ),
 
       dividerTheme: DividerThemeData(
         color: colors.divider,
         thickness: 1,
+        space: spacing.sectionGap,
       ),
       inputDecorationTheme: InputDecorationTheme(
-        isDense: true,
-        border: InputBorder.none,
+        filled: true,
+        fillColor: colors.surface,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: field.horizontalPadding,
+          vertical: 0,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: radius.buttonRadius,
+          borderSide: BorderSide(
+            color: colors.border,
+            width: field.borderWidth,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: radius.buttonRadius,
+          borderSide: BorderSide(
+            color: colors.border,
+            width: field.borderWidth,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: radius.buttonRadius,
+          borderSide: BorderSide(
+            color: colors.brand,
+            width: field.borderWidth,
+          ),
+        ),
         hintStyle: textTheme.bodyMedium?.copyWith(
           color: colors.textTertiary,
         ),
@@ -97,12 +92,12 @@ class AppTheme {
           foregroundColor: colors.brandOn,
           disabledBackgroundColor: colors.divider,
           disabledForegroundColor: colors.textTertiary,
-          textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w900,
-          ),
+          minimumSize: Size.fromHeight(field.height),
+          padding: EdgeInsets.symmetric(horizontal: spacing.cardPadding),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius.button),
+            borderRadius: radius.buttonRadius,
           ),
+          textStyle: textTheme.labelLarge,
         ),
       ),
 
@@ -110,32 +105,25 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: colors.textPrimary,
           backgroundColor: colors.surface,
-          textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w900,
-          ),
+          minimumSize: Size.fromHeight(field.height),
+          padding: EdgeInsets.symmetric(horizontal: spacing.cardPadding),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius.button),
+            borderRadius: radius.buttonRadius,
           ),
           side: BorderSide(color: colors.border),
+          textStyle: textTheme.labelLarge,
         ),
       ),
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: colors.textPrimary,
-          textStyle: textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w900,
+          minimumSize: Size.fromHeight(field.height),
+          padding: EdgeInsets.symmetric(horizontal: spacing.itemGap),
+          shape: RoundedRectangleBorder(
+            borderRadius: radius.buttonRadius,
           ),
-        ),
-      ),
-
-
-      listTileTheme: ListTileThemeData(
-        tileColor: colors.surface,
-        iconColor: colors.textPrimary,
-        textColor: colors.textPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius.card),
+          textStyle: textTheme.labelLarge,
         ),
       ),
 
@@ -143,7 +131,7 @@ class AppTheme {
         colors,
         spacing,
         radius,
-        fields,
+        field,
         metrics,
       ],
     );
